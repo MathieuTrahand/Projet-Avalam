@@ -38,7 +38,6 @@ class Text:
         self.text_col = text_col
         self.position = position
         self.anchor = anchor.lower()
-
         self.update()
 
     def update(self, position=None, anchor=None):

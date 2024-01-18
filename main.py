@@ -16,7 +16,16 @@ class Game:
             xy=(self.windows_size[0] // 2, self.windows_size[1] // 2 + 0.08 * self.windows_size[1]),
             size=(min(self.windows_size) * 0.7, min(self.windows_size) * 0.7)
         )
-
+        self.black_ball=graphic_interface.Image(
+            path="IMAGES/boule noir.png",
+            xy=(self.windows_size[0] // 1.08, 0.07 * self.windows_size[1]),
+            size=(min(self.windows_size) * 0.1, min(self.windows_size) * 0.1)
+        )
+        self.white_ball = graphic_interface.Image(
+            path="IMAGES/boule blanche.png",
+            xy=(self.windows_size[0] *0.07, 0.07 * self.windows_size[1]),
+            size=(min(self.windows_size) * 0.1, min(self.windows_size) * 0.1)
+        )
         self.player1 = game_management.Player(name="Player 1")
         self.player2 = game_management.Player(name="Player 2")
 
@@ -38,7 +47,8 @@ class Game:
     def display(self):
         self.screen.fill(self.bg_color)
         self.board.draw(self.screen)
-
+        self.black_ball.draw(self.screen)
+        self.white_ball.draw(self.screen)
         pygame.draw.line(surface=screen,
                          color="black",
                          start_pos=(0, self.windows_size[1] * 0.2),
@@ -48,12 +58,12 @@ class Game:
 
         self.player1.text.draw(
             screen,
-            position=(self.windows_size[0] * 0.14, self.windows_size[1] * 0.02)
+            position=(self.windows_size[0] * 0.14, self.windows_size[1] * 0.04)
         )
 
         self.player2.text.draw(
             screen,
-            position=(self.windows_size[0] * 0.86, self.windows_size[1] * 0.02),
+            position=(self.windows_size[0] * 0.86, self.windows_size[1] * 0.04),
             anchor='topright'
         )
 
