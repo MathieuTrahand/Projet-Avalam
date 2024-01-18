@@ -1,7 +1,5 @@
 import pygame
 
-pygame.init()
-
 windows_size = (600, 600)
 pygame.display.set_caption("AVALAM")
 
