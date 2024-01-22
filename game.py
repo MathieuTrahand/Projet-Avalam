@@ -10,25 +10,25 @@ class Game:
         self.clock = pygame.time.Clock()
         self.bg_color = bg_color
         self.windows_size = self.screen.get_size()
+        self.window = "input names"
 
         self.board = graphic_interface.Image(
             path="IMAGES/plateau_avalam.png",
             xy=(self.windows_size[0] // 2, self.windows_size[1] // 2 + 0.08 * self.windows_size[1]),
             size=(min(self.windows_size) * 0.7, min(self.windows_size) * 0.7)
         )
-        self.black_ball=graphic_interface.Image(
+        self.black_pawn = graphic_interface.Image(
             path="IMAGES/boule noir.png",
             xy=(self.windows_size[0] // 1.08, 0.07 * self.windows_size[1]),
             size=(min(self.windows_size) * 0.1, min(self.windows_size) * 0.1)
         )
-        self.white_ball = graphic_interface.Image(
+        self.white_pawn = graphic_interface.Image(
             path="IMAGES/boule blanche.png",
-            xy=(self.windows_size[0] *0.07, 0.07 * self.windows_size[1]),
+            xy=(self.windows_size[0] * 0.07, 0.07 * self.windows_size[1]),
             size=(min(self.windows_size) * 0.1, min(self.windows_size) * 0.1)
         )
         self.player1 = game_management.Player(name="Player 1")
         self.player2 = game_management.Player(name="Player 2")
-
 
     def handling_events(self):
         for event in pygame.event.get():
@@ -45,32 +45,37 @@ class Game:
         "gestion drage and drop ??? Jsp si ça se fera là aussi ou pas à voir"
 
     def display(self):
-        self.screen.fill(self.bg_color)
-        self.board.draw(self.screen)
-        self.black_ball.draw(self.screen)
-        self.white_ball.draw(self.screen)
-        pygame.draw.line(surface=self.screen,
-                         color="black",
-                         start_pos=(0, self.windows_size[1] * 0.2),
-                         end_pos=(self.windows_size[0], self.windows_size[1] * 0.2),
-                         width=3
-                         )
+        if self.window == "input names":
+            # afficher les input et le texte
+            graphic_interface.Input_Interface()
+            # à la fin des entrées :
+            self.window = "game"
 
-        self.player1.text.draw(
-            self.screen,
-            position=(self.windows_size[0] * 0.14, self.windows_size[1] * 0.04)
-        )
+        elif self.window == "game":
+            self.screen.fill(self.bg_color)
+            self.board.draw(self.screen)
+            self.black_pawn.draw(self.screen)
+            self.white_pawn.draw(self.screen)
+            pygame.draw.line(surface=self.screen,
+                             color="black",
+                             start_pos=(0, self.windows_size[1] * 0.2),
+                             end_pos=(self.windows_size[0], self.windows_size[1] * 0.2),
+                             width=3
+                             )
 
-        self.player2.text.draw(
-            self.screen,
-            position=(self.windows_size[0] * 0.86, self.windows_size[1] * 0.04),
-            anchor='topright'
-        )
+            self.player1.text.draw(
+                self.screen,
+                position=(self.windows_size[0] * 0.14, self.windows_size[1] * 0.04)
+            )
 
+            self.player2.text.draw(
+                self.screen,
+                position=(self.windows_size[0] * 0.86, self.windows_size[1] * 0.04),
+                anchor='topright'
+            )
 
-
-        """gestion des persos : noms et couleur"""
-        "gestion de l'affichage du temps"
+            """gestion des persos : noms et couleur"""
+            "gestion de l'affichage du temps"
         pygame.display.flip()
 
     def run(self):
