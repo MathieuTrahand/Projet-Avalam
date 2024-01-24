@@ -3,6 +3,23 @@ import graphic_interface
 import game_management
 
 
+class InputInterface:
+    def __init__(self, game):
+        self.game = game
+
+    def handling_events(self):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                self.game.window = "game"
+
+    def update(self):
+        pass
+
+    def display(self):
+        pass
+
+
+
 class Game:
     def __init__(self, bg_color="white"):
         self.screen = pygame.display.set_mode(graphic_interface.windows_size)
@@ -10,7 +27,7 @@ class Game:
         self.clock = pygame.time.Clock()
         self.bg_color = bg_color
         self.windows_size = self.screen.get_size()
-        self.window = "input names"
+        self.window = "input interface"
 
         self.board = graphic_interface.Image(
             path="IMAGES/plateau_avalam.png",
@@ -33,7 +50,6 @@ class Game:
             size=(min(self.windows_size) * 0.1, min(self.windows_size) * 0.1)
         )
 
-
         self.player1 = game_management.Player(name="Player 1")
         self.player2 = game_management.Player(name="Player 2")
 
@@ -52,45 +68,48 @@ class Game:
         "gestion drage and drop ??? Jsp si ça se fera là aussi ou pas à voir"
 
     def display(self):
-        if self.window == "input names":
-            # afficher les input et le texte
-            graphic_interface.Input_Interface()
-            # à la fin des entrées :
-            self.window = "game"
+        self.screen.fill(self.bg_color)
+        self.board.draw(self.screen)
+        self.black_pawn.draw(self.screen)
+        """self.Timer.draw(surface=self.screen,
+                        xy=(self.windows_size[0] * 0.14, self.windows_size[1] * 0.04)
+                        )"""
+        self.white_pawn.draw(self.screen),
+        pygame.draw.line(surface=self.screen,
+                         color="black",
+                         start_pos=(0, self.windows_size[1] * 0.2),
+                         end_pos=(self.windows_size[0], self.windows_size[1] * 0.2),
+                         width=3
+                         )
 
-        elif self.window == "game":
-            self.screen.fill(self.bg_color)
-            self.board.draw(self.screen)
-            self.black_pawn.draw(self.screen)
-            self.Timer.draw(surface=self.screen,
-                            xy=(self.windows_size[0] * 0.14, self.windows_size[1] * 0.04)
-                            )
-            self.white_pawn.draw(self.screen),
-            pygame.draw.line(surface=self.screen,
-                             color="black",
-                             start_pos=(0, self.windows_size[1] * 0.2),
-                             end_pos=(self.windows_size[0], self.windows_size[1] * 0.2),
-                             width=3
-                             )
+        self.player1.text.draw(
+            self.screen,
+            position=(self.windows_size[0] * 0.14, self.windows_size[1] * 0.04)
+        )
 
-            self.player1.text.draw(
-                self.screen,
-                position=(self.windows_size[0] * 0.14, self.windows_size[1] * 0.04)
-            )
+        self.player2.text.draw(
+            self.screen,
+            position=(self.windows_size[0] * 0.86, self.windows_size[1] * 0.04),
+            anchor='topright'
+        )
 
-            self.player2.text.draw(
-                self.screen,
-                position=(self.windows_size[0] * 0.86, self.windows_size[1] * 0.04),
-                anchor='topright'
-            )
-
-            """gestion des persos : noms et couleur"""
-            "gestion de l'affichage du temps"
+        """gestion des persos : noms et couleur"""
+        "gestion de l'affichage du temps"
         pygame.display.flip()
 
     def run(self):
         while self.running:
-            self.handling_events()
-            self.update()
-            self.display()
-            self.clock.tick(60)
+
+            if self.window == "input interface":
+                interface = InputInterface(self)
+
+                interface.handling_events()
+                interface.update()
+                interface.display()
+                self.clock.tick(60)
+
+            elif self.window == "game":
+                self.handling_events()
+                self.update()
+                self.display()
+                self.clock.tick(60)

@@ -55,7 +55,6 @@ class Timer:
 
         pygame.draw.rect(self.surface, self.xy, self.anchor)
 
-
 class Text:
     def __init__(self, text="", font: pygame.font = None, text_col=pygame.Color("black"),
                  bg_col=pygame.Color("white"), position=(0, 0), anchor='topleft'):
@@ -83,13 +82,3 @@ class Text:
 
         pygame.draw.rect(self.surface, self.bg_col, self.bg_rect)
         self.surface.blit(self.img, self.bg_rect.topleft)
-
-
-def Input_Interface():
-    pass
-
-    # Tant que y a rien :
-    #       return None
-    # Si y a qqch
-    #       return nom1, nom2
-    #       ne pas oublier dans le code principale self.window = "game"
