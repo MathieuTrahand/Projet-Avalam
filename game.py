@@ -10,7 +10,7 @@ class InputInterface:
     def handling_events(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                self.game.window = "game"
+                self.game.running = False
 
     def update(self):
         pass
