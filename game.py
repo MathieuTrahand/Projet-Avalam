@@ -27,7 +27,7 @@ class Game:
         self.clock = pygame.time.Clock()
         self.bg_color = bg_color
         self.windows_size = self.screen.get_size()
-        self.window = "input interface"
+        self.window = "game"
 
         self.board = graphic_interface.Image(
             path="IMAGES/plateau_avalam.png",
@@ -44,11 +44,8 @@ class Game:
             xy=(self.windows_size[0] * 0.07, 0.07 * self.windows_size[1]),
             size=(min(self.windows_size) * 0.1, min(self.windows_size) * 0.1)
         )
-        self.Timer = graphic_interface.Timer(
-            screen=self.screen,
-            xy=(self.windows_size[0] * 0.07, 0.07 * self.windows_size[1]),
-            size=(min(self.windows_size) * 0.1, min(self.windows_size) * 0.1)
-        )
+
+        self.timer = graphic_interface.Timer()
 
         self.player1 = game_management.Player(name="Player 1")
         self.player2 = game_management.Player(name="Player 2")
@@ -64,16 +61,21 @@ class Game:
                                      sur bouton pause ? """
 
     def update(self):
-        "timer update"
+
+        # Mettre à jour le minuteur toutes les secondes
+        self.timer.update_timer += self.clock.get_time()  # Temps écoulé depuis la dernière frame
+        if self.timer.update_timer >= 1000:  # 1000 millisecondes = 1 seconde
+            self.timer.tick()
+            self.timer.update_timer = 0  # Réinitialiser le compteur
+
+
         "gestion drage and drop ??? Jsp si ça se fera là aussi ou pas à voir"
 
     def display(self):
         self.screen.fill(self.bg_color)
         self.board.draw(self.screen)
         self.black_pawn.draw(self.screen)
-        """self.Timer.draw(surface=self.screen,
-                        xy=(self.windows_size[0] * 0.14, self.windows_size[1] * 0.04)
-                        )"""
+
         self.white_pawn.draw(self.screen),
         pygame.draw.line(surface=self.screen,
                          color="black",
@@ -94,7 +96,8 @@ class Game:
         )
 
         """gestion des persos : noms et couleur"""
-        "gestion de l'affichage du temps"
+
+        self.timer.draw(self.screen)
         pygame.display.flip()
 
     def run(self):
