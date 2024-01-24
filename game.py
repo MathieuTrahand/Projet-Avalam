@@ -27,6 +27,13 @@ class Game:
             xy=(self.windows_size[0] * 0.07, 0.07 * self.windows_size[1]),
             size=(min(self.windows_size) * 0.1, min(self.windows_size) * 0.1)
         )
+        self.Timer = graphic_interface.Timer(
+            screen=self.screen,
+            xy=(self.windows_size[0] * 0.07, 0.07 * self.windows_size[1]),
+            size=(min(self.windows_size) * 0.1, min(self.windows_size) * 0.1)
+        )
+
+
         self.player1 = game_management.Player(name="Player 1")
         self.player2 = game_management.Player(name="Player 2")
 
@@ -55,7 +62,10 @@ class Game:
             self.screen.fill(self.bg_color)
             self.board.draw(self.screen)
             self.black_pawn.draw(self.screen)
-            self.white_pawn.draw(self.screen)
+            self.Timer.draw(surface=self.screen,
+                            xy=(self.windows_size[0] * 0.14, self.windows_size[1] * 0.04)
+                            )
+            self.white_pawn.draw(self.screen),
             pygame.draw.line(surface=self.screen,
                              color="black",
                              start_pos=(0, self.windows_size[1] * 0.2),

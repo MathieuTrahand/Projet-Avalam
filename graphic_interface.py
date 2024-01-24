@@ -28,17 +28,45 @@ class Image:
     def draw(self, screen):
         screen.blit(self.image, self.rect)
 
+class Timer:
+    def __init__(self, screen, xy: tuple = (0, 0), size: tuple = (0, 0), anchor='topleft'):
+        self.screen = screen
+        self.anchor=anchor
+        self.size = size
+        self.seconds = 0
+        self.xy = xy
+        self.is_running = False
+    def start(self):
+        self.is_running = True
+    def stop(self):
+        self.is_running = False
+    def reset(self):
+        self.seconds = 0
+    def update(self,xy=None,anchor=None):
+        if self.is_running:
+            self.seconds += 1
+            if xy is not None:
+                self.xy = xy
+            if anchor is not None:
+                self.anchor = anchor.lower()
+    def draw(self, surface, xy=None,anchor=None):
+        self.update(surface,xy, anchor)
+        self.surface = surface
+
+        pygame.draw.rect(self.surface, self.xy, self.anchor)
+
 
 class Text:
-    def __init__(self, text="", font:pygame.font = None, text_col=pygame.Color("black"),
+    def __init__(self, text="", font: pygame.font = None, text_col=pygame.Color("black"),
                  bg_col=pygame.Color("white"), position=(0, 0), anchor='topleft'):
         self.text = text
-        self.font = font if font is not None else fonts['basic_font']
+        self.font = font if font is not None else font['basic_font']
         self.bg_col = bg_col
         self.text_col = text_col
         self.position = position
         self.anchor = anchor.lower()
         self.update()
+
 
     def update(self, position=None, anchor=None):
         if position is not None:
