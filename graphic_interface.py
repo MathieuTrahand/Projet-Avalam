@@ -70,18 +70,20 @@ class Text:
     def __init__(self, text="", font: pygame.font = None, text_col=pygame.Color("black"),
                  bg_col=pygame.Color("white"), position=(0, 0), anchor='topleft'):
         self.text = text
-        self.font = font if font is not None else font['basic_font']
+        self.font = font if font is not None else fonts['basic_font']
         self.bg_col = bg_col
         self.text_col = text_col
         self.position = position
         self.anchor = anchor.lower()
         self.update()
 
-    def update(self, position=None, anchor=None):
+    def update(self, position=None, anchor=None, text=None):
         if position is not None:
             self.position = position
         if anchor is not None:
             self.anchor = anchor.lower()
+        if text is not None:
+            self.text = text
 
         self.img = self.font.render(self.text, True, self.text_col)
         self.bg_rect = self.img.get_rect(**{self.anchor: self.position})

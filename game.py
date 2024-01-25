@@ -19,7 +19,6 @@ class InputInterface:
         pass
 
 
-
 class Game:
     def __init__(self, bg_color="white"):
         self.screen = pygame.display.set_mode(graphic_interface.windows_size)
@@ -45,15 +44,33 @@ class Game:
             size=(min(self.windows_size) * 0.1, min(self.windows_size) * 0.1)
         )
 
-        self.timer = graphic_interface.Timer()
+        self.timer = graphic_interface.Timer(
+            position=(self.windows_size[0]/2, self.windows_size[1]*0.08),
+            anchor='center'
+        )
 
-        self.player1 = game_management.Player(name="Player 1")
-        self.player2 = game_management.Player(name="Player 2")
+        self.all_piles = []
+        self.create_piles()
+
+        self.player1 = game_management.Player(name="Player 1", all_piles=self.all_piles, color="blanc")
+        self.player2 = game_management.Player(name="Player 2", all_piles=self.all_piles, color="noir")
+
+    def create_piles(self):
+        couleur = "blanc"
+        for i in range(6):
+            self.all_piles.append(game_management.PileDePions(self.screen, self.all_piles, couleur,
+                                                              (140 + 37 * i, 295), 1))
+            if couleur == "blanc":
+                couleur = "noir"
+            else:
+                couleur = "blanc"
 
     def handling_events(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.running = False
+            for pile in self.all_piles:
+                pile.handle_event(event)
 
         """if clique:
                 fichier.clique() --> va gérer le clique dans un autre fichier
@@ -68,6 +85,11 @@ class Game:
             self.timer.tick()
             self.timer.update_timer = 0  # Réinitialiser le compteur
 
+        for pile in self.all_piles:
+            pile.update()
+
+        self.player1.update_score()
+        self.player2.update_score()
 
         "gestion drage and drop ??? Jsp si ça se fera là aussi ou pas à voir"
 
@@ -84,20 +106,33 @@ class Game:
                          width=3
                          )
 
-        self.player1.text.draw(
+        self.player1.name_text.draw(
             self.screen,
             position=(self.windows_size[0] * 0.14, self.windows_size[1] * 0.04)
         )
 
-        self.player2.text.draw(
+        self.player1.score_text.draw(
+            self.screen,
+            position=(self.windows_size[0] * 0.14, self.windows_size[1] * 0.1)
+        )
+
+        self.player2.name_text.draw(
             self.screen,
             position=(self.windows_size[0] * 0.86, self.windows_size[1] * 0.04),
             anchor='topright'
         )
 
-        """gestion des persos : noms et couleur"""
+        self.player2.score_text.draw(
+            self.screen,
+            position=(self.windows_size[0] * 0.86, self.windows_size[1] * 0.1),
+            anchor='topright'
+        )
 
         self.timer.draw(self.screen)
+
+        for pile in self.all_piles:
+            pile.draw()
+
         pygame.display.flip()
 
     def run(self):
