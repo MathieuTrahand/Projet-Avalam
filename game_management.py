@@ -1,6 +1,10 @@
 from graphic_interface import Text, fonts
 import pygame
 
+empty_surface = pygame.Surface((0, 0))
+
+pawns_images = {}
+
 
 class Player:
     def __init__(self, name, all_piles, color="blanc"):
@@ -22,34 +26,42 @@ class Player:
     def update_score(self):
         self.score = 0
         for pile in self.all_piles:
-            if pile.color == self.color:
+            if pile.nb_pawns > 0 and pile.color == self.color:
                 self.score += 1
 
         self.score_text.update(text=f"score : {str(self.score)}")
 
 
-class PileDePions():
+class PawnsPile:
     def __init__(self, screen, all_piles, color="blanc", position=(0, 0), nb_pawns=1):
         self.screen = screen
-        self.size = min(self.screen.get_size()) // 20
+        self.size = min(self.screen.get_size()) / 20
         self.color = color
         self.nb_pawns = nb_pawns
-        self.image = self.load_image()
         self.initial_position = position
-        self.rect = self.image.get_rect(topleft=self.initial_position)
         self.dragging = False
         self.offset = [0, 0]
         self.all_piles = all_piles
+        self.image = self.load_image()
+        self.rect = self.image.get_rect(topleft=self.initial_position)
+
 
     def load_image(self):
         if self.nb_pawns > 0:
             # Charger l'image en fonction de la couleur et du nombre de pions
+            key = f'{self.color, self.nb_pawns}'
 
-            image_path = f"IMAGES/pion_{self.color}_{self.nb_pawns}.png"  # À adapter
-            image = pygame.image.load(image_path)
-            return pygame.transform.scale(image, (self.size, self.size))
+            # On les met dans un dictionnaire pour éviter d'avoir à les charger 1000 fois
+
+            if key not in pawns_images:
+                image_path = f"IMAGES/pion_{self.color}_{self.nb_pawns}.png"  # À adapter
+                image = pygame.image.load(image_path)
+                pawns_images[key] = pygame.transform.scale(image, (self.size, self.size))
+
+            return pawns_images[key]
         else:
-            return pygame.Surface((self.size / 10, self.size / 10))  # Aucune image si aucun pion
+            self.color = None
+            return empty_surface  # Aucune image si aucun pion
 
     def draw(self, screen=None):
         if not screen:

@@ -33,6 +33,7 @@ class Game:
             xy=(self.windows_size[0] // 2, self.windows_size[1] // 2 + 0.08 * self.windows_size[1]),
             size=(min(self.windows_size) * 0.7, min(self.windows_size) * 0.7)
         )
+
         self.black_pawn = graphic_interface.Image(
             path="IMAGES/boule noir.png",
             xy=(self.windows_size[0] // 1.08, 0.07 * self.windows_size[1]),
@@ -45,7 +46,7 @@ class Game:
         )
 
         self.timer = graphic_interface.Timer(
-            position=(self.windows_size[0]/2, self.windows_size[1]*0.08),
+            position=(self.windows_size[0] / 2, self.windows_size[1] * 0.08),
             anchor='center'
         )
 
@@ -57,13 +58,40 @@ class Game:
 
     def create_piles(self):
         couleur = "blanc"
-        for i in range(6):
-            self.all_piles.append(game_management.PileDePions(self.screen, self.all_piles, couleur,
-                                                              (140 + 37 * i, 295), 1))
-            if couleur == "blanc":
-                couleur = "noir"
-            else:
-                couleur = "blanc"
+        window_width = self.windows_size[0]
+        window_height = self.windows_size[1]
+        x_start = window_width * 0.23
+        y_start = window_height * 0.3
+        x_increment = window_width * 0.0625
+        y_increment = window_height * 0.063
+        all_piles_append = self.all_piles.append
+
+
+        # Liste des coordonnées qui ne peuvent pas avoir de pile
+        no_pile = [(0, 0), (0, 1), (0, 2), (0, 3), (0, 4), (0, 7), (0, 8), (1, 0), (1, 1), (1, 2), (1, 3), (1, 8), (2, 0), (2, 1), (2, 8), (3, 8), (4, 4), (5, 0), (6, 0), (6, 7), (6, 8), (7, 0), (7, 5), (7, 6), (7, 7), (7, 8), (8, 0), (8, 1), (8, 4), (8, 5), (8, 6), (8, 7), (8, 8)]
+
+        index = 0
+
+        for i in range(9):
+            y_position = y_start + y_increment * i
+            for j in range(9):
+                x_position = x_start + x_increment * j
+
+                if (i, j) == no_pile[index]:
+                    index += 1
+                    nb_pawns = 0
+                else:
+                    nb_pawns = 1
+
+                all_piles_append(
+                    game_management.PawnsPile(
+                        self.screen, self.all_piles, couleur,
+                        position=(x_position, y_position),
+                        nb_pawns=nb_pawns
+                    )
+                )
+
+                couleur = "noir" if couleur == "blanc" else "blanc"
 
     def handling_events(self):
         for event in pygame.event.get():
@@ -95,7 +123,6 @@ class Game:
 
     def display(self):
         self.screen.fill(self.bg_color)
-        self.board.draw(self.screen)
         self.black_pawn.draw(self.screen)
 
         self.white_pawn.draw(self.screen),
@@ -129,6 +156,8 @@ class Game:
         )
 
         self.timer.draw(self.screen)
+
+        self.board.draw(self.screen)
 
         for pile in self.all_piles:
             pile.draw()
