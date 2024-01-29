@@ -1,22 +1,24 @@
 import pygame, sys
-from graphic_interface import Image
+pygame.init()
+from graphic_interface import Image,fonts,windows_size
 
+a=(700,700)
 pygame.init()
 clock=pygame.time.Clock()
-screen=pygame.display.set_mode([600,600])
-base_font=pygame.font.Font(None,28)
+screen=pygame.display.set_mode(a)
+base_font=fonts['basic_font']
 user_text='Pseudo Player 1'
 user_text_2='Pseudo Player 2'
-input_rect_1=pygame.Rect(280,225,140,32)
-input_rect_2=pygame.Rect(280,385,140,32)
+input="Entrez les noms d'utilisateur"
+input_rect_1=pygame.Rect(0.37*a[0],0.49*a[1],100,50)
+input_rect_2=pygame.Rect(0.37*a[0],0.675*a[1],100,50)
+input_rect_3=pygame.Rect(120,120,80,32)
 color_active=pygame.Color('lightskyblue3')
 color_passive=pygame.Color('white')
 color=color_passive
 
-background=Image("")
-background=pygame.image.load("INTERFAACE.png").convert()
-white=pygame.image.load("pion_blanc_1.png").convert()
-black=pygame.image.load("pion_noir_2.png").convert()
+background=Image("Images\Interface_Login.png",(300,360),(1.25*a[0],1.25*a[1]))
+
 
 active1, active2=False,False
 
@@ -65,21 +67,20 @@ while True:
 
     pygame.draw.rect(screen,color,input_rect_1,8)
     pygame.draw.rect(screen, color, input_rect_2, 8)
+    pygame.draw.rect(screen,color,input_rect_3,8)
 
-    text_surface=base_font.render(user_text,True,(0,0,0))
-    text_surface2 = base_font.render(user_text_2, True, (255, 255, 255))
+    text_surface=base_font.render(user_text,True,(255,255,255))
+    text_surface2 = base_font.render(user_text_2, True, (0, 0, 0))
+    text_surface3=base_font.render(input, True, (255, 0, 0))
 
-    screen.blit(background, (-700, -100))
-    white = pygame.transform.scale(white, (70,70))
-    black=pygame.transform.scale(black,(70,70))
+    background.draw(screen)
 
-    screen.blit(white, (200, 200))
-    screen.blit(black,(200,400))
 
 
 
     screen.blit(text_surface,(input_rect_1.x+5,input_rect_1.y+5))
     screen.blit(text_surface2, (input_rect_2.x + 5, input_rect_2.y + 5))
+    screen.blit(text_surface3,(input_rect_3.x + 5, input_rect_3.y + 5))
     input_rect_1.w=max(100,text_surface.get_width()+10)
     input_rect_2.w = max(100, text_surface2.get_width() + 10)
 
