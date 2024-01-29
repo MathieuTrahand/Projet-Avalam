@@ -20,18 +20,17 @@ class InputInterface:
 
 
 class Game:
-    def __init__(self, bg_color="white"):
+    def __init__(self):
         self.screen = pygame.display.set_mode(graphic_interface.windows_size)
         self.running = True
         self.clock = pygame.time.Clock()
-        self.bg_color = bg_color
         self.windows_size = self.screen.get_size()
         self.window = "game"
 
-        self.board = graphic_interface.Image(
-            path="IMAGES/plateau_avalam.png",
-            xy=(self.windows_size[0] // 2, self.windows_size[1] // 2 + 0.08 * self.windows_size[1]),
-            size=(min(self.windows_size) * 0.7, min(self.windows_size) * 0.7)
+        self.bg = graphic_interface.Image(
+            path='IMAGES/fond écran.png',
+            xy=(self.windows_size[0] // 2, self.windows_size[1] // 2),
+            size=(min(self.windows_size) , min(self.windows_size))
         )
 
         self.black_pawn = graphic_interface.Image(
@@ -122,16 +121,10 @@ class Game:
         "gestion drage and drop ??? Jsp si ça se fera là aussi ou pas à voir"
 
     def display(self):
-        self.screen.fill(self.bg_color)
+        self.bg.draw(self.screen)
         self.black_pawn.draw(self.screen)
 
         self.white_pawn.draw(self.screen),
-        pygame.draw.line(surface=self.screen,
-                         color="black",
-                         start_pos=(0, self.windows_size[1] * 0.2),
-                         end_pos=(self.windows_size[0], self.windows_size[1] * 0.2),
-                         width=3
-                         )
 
         self.player1.name_text.draw(
             self.screen,
@@ -157,7 +150,6 @@ class Game:
 
         self.timer.draw(self.screen)
 
-        self.board.draw(self.screen)
 
         for pile in self.all_piles:
             pile.draw()
