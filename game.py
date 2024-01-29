@@ -65,9 +65,10 @@ class Game:
         y_increment = window_height * 0.063
         all_piles_append = self.all_piles.append
 
-
         # Liste des coordonnées qui ne peuvent pas avoir de pile
-        no_pile = [(0, 0), (0, 1), (0, 2), (0, 3), (0, 4), (0, 7), (0, 8), (1, 0), (1, 1), (1, 2), (1, 3), (1, 8), (2, 0), (2, 1), (2, 8), (3, 8), (4, 4), (5, 0), (6, 0), (6, 7), (6, 8), (7, 0), (7, 5), (7, 6), (7, 7), (7, 8), (8, 0), (8, 1), (8, 4), (8, 5), (8, 6), (8, 7), (8, 8)]
+        no_pile = [(0, 0), (0, 1), (0, 2), (0, 3), (0, 4), (0, 7), (0, 8), (1, 0), (1, 1), (1, 2), (1, 3), (1, 8),
+                   (2, 0), (2, 1), (2, 8), (3, 8), (4, 4), (5, 0), (6, 0), (6, 7), (6, 8), (7, 0), (7, 5), (7, 6),
+                   (7, 7), (7, 8), (8, 0), (8, 1), (8, 4), (8, 5), (8, 6), (8, 7), (8, 8)]
 
         index = 0
 
@@ -99,11 +100,6 @@ class Game:
             for pile in self.all_piles:
                 pile.handle_event(event)
 
-        """if clique:
-                fichier.clique() --> va gérer le clique dans un autre fichier
-                                     sur colonne ? Maintenu ? => Gérer drag and drop
-                                     sur bouton pause ? """
-
     def update(self):
 
         # Mettre à jour le minuteur toutes les secondes
@@ -117,8 +113,6 @@ class Game:
 
         self.player1.update_score()
         self.player2.update_score()
-
-        "gestion drage and drop ??? Jsp si ça se fera là aussi ou pas à voir"
 
     def display(self):
         self.bg.draw(self.screen)

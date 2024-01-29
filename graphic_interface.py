@@ -1,6 +1,6 @@
 import pygame
 
-windows_size = (600, 600)
+windows_size = (700, 700)
 pygame.display.set_caption("AVALAM")
 
 # Définition des polices d'écriture
@@ -69,6 +69,7 @@ class Timer:
 class Text:
     def __init__(self, text="", font: pygame.font = None, text_col=pygame.Color("black"),
                  bg_col=pygame.Color("white"), position=(0, 0), anchor='topleft'):
+
         self.text = text
         self.font = font if font is not None else fonts['basic_font']
         self.bg_col = bg_col
@@ -86,11 +87,9 @@ class Text:
             self.text = text
 
         self.img = self.font.render(self.text, True, self.text_col)
-        self.bg_rect = self.img.get_rect(**{self.anchor: self.position})
+        self.rect = self.img.get_rect(**{self.anchor: self.position})
 
     def draw(self, surface, position=None, anchor=None):
         self.update(position, anchor)
-        self.surface = surface
 
-        pygame.draw.rect(self.surface, self.bg_col, self.bg_rect)
-        self.surface.blit(self.img, self.bg_rect.topleft)
+        surface.blit(self.img, self.rect)
