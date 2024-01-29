@@ -1,4 +1,5 @@
 import pygame, sys
+from graphic_interface import Image
 
 pygame.init()
 clock=pygame.time.Clock()
@@ -12,6 +13,7 @@ color_active=pygame.Color('lightskyblue3')
 color_passive=pygame.Color('white')
 color=color_passive
 
+background=Image("")
 background=pygame.image.load("INTERFAACE.png").convert()
 white=pygame.image.load("pion_blanc_1.png").convert()
 black=pygame.image.load("pion_noir_2.png").convert()
