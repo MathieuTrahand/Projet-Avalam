@@ -20,18 +20,17 @@ class InputInterface:
 
 
 class Game:
-    def __init__(self, bg_color="white"):
+    def __init__(self):
         self.screen = pygame.display.set_mode(graphic_interface.windows_size)
         self.running = True
         self.clock = pygame.time.Clock()
-        self.bg_color = bg_color
         self.windows_size = self.screen.get_size()
         self.window = "game"
 
-        self.board = graphic_interface.Image(
-            path="IMAGES/plateau_avalam.png",
-            xy=(self.windows_size[0] // 2, self.windows_size[1] // 2 + 0.08 * self.windows_size[1]),
-            size=(min(self.windows_size) * 0.7, min(self.windows_size) * 0.7)
+        self.bg = graphic_interface.Image(
+            path='IMAGES/fond écran.png',
+            xy=(self.windows_size[0] // 2, self.windows_size[1] // 2),
+            size=(min(self.windows_size) , min(self.windows_size))
         )
 
         self.black_pawn = graphic_interface.Image(
@@ -66,9 +65,10 @@ class Game:
         y_increment = window_height * 0.063
         all_piles_append = self.all_piles.append
 
-
         # Liste des coordonnées qui ne peuvent pas avoir de pile
-        no_pile = [(0, 0), (0, 1), (0, 2), (0, 3), (0, 4), (0, 7), (0, 8), (1, 0), (1, 1), (1, 2), (1, 3), (1, 8), (2, 0), (2, 1), (2, 8), (3, 8), (4, 4), (5, 0), (6, 0), (6, 7), (6, 8), (7, 0), (7, 5), (7, 6), (7, 7), (7, 8), (8, 0), (8, 1), (8, 4), (8, 5), (8, 6), (8, 7), (8, 8)]
+        no_pile = [(0, 0), (0, 1), (0, 2), (0, 3), (0, 4), (0, 7), (0, 8), (1, 0), (1, 1), (1, 2), (1, 3), (1, 8),
+                   (2, 0), (2, 1), (2, 8), (3, 8), (4, 4), (5, 0), (6, 0), (6, 7), (6, 8), (7, 0), (7, 5), (7, 6),
+                   (7, 7), (7, 8), (8, 0), (8, 1), (8, 4), (8, 5), (8, 6), (8, 7), (8, 8)]
 
         index = 0
 
@@ -100,11 +100,6 @@ class Game:
             for pile in self.all_piles:
                 pile.handle_event(event)
 
-        """if clique:
-                fichier.clique() --> va gérer le clique dans un autre fichier
-                                     sur colonne ? Maintenu ? => Gérer drag and drop
-                                     sur bouton pause ? """
-
     def update(self):
 
         # Mettre à jour le minuteur toutes les secondes
@@ -119,19 +114,11 @@ class Game:
         self.player1.update_score()
         self.player2.update_score()
 
-        "gestion drage and drop ??? Jsp si ça se fera là aussi ou pas à voir"
-
     def display(self):
-        self.screen.fill(self.bg_color)
+        self.bg.draw(self.screen)
         self.black_pawn.draw(self.screen)
 
         self.white_pawn.draw(self.screen),
-        pygame.draw.line(surface=self.screen,
-                         color="black",
-                         start_pos=(0, self.windows_size[1] * 0.2),
-                         end_pos=(self.windows_size[0], self.windows_size[1] * 0.2),
-                         width=3
-                         )
 
         self.player1.name_text.draw(
             self.screen,
@@ -157,7 +144,6 @@ class Game:
 
         self.timer.draw(self.screen)
 
-        self.board.draw(self.screen)
 
         for pile in self.all_piles:
             pile.draw()
