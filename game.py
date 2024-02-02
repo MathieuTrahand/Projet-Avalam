@@ -30,7 +30,7 @@ class Game:
         self.bg = graphic_interface.Image(
             path='IMAGES/fond écran.png',
             xy=(self.windows_size[0] // 2, self.windows_size[1] // 2),
-            size=(min(self.windows_size) , min(self.windows_size))
+            size=(min(self.windows_size), min(self.windows_size))
         )
 
         self.black_pawn = graphic_interface.Image(
@@ -59,8 +59,8 @@ class Game:
         couleur = "blanc"
         window_width = self.windows_size[0]
         window_height = self.windows_size[1]
-        x_start = window_width * 0.23
-        y_start = window_height * 0.3
+        x_start = window_width * 0.225
+        y_start = window_height * 0.223
         x_increment = window_width * 0.0625
         y_increment = window_height * 0.063
         all_piles_append = self.all_piles.append
@@ -73,6 +73,7 @@ class Game:
         index = 0
 
         for i in range(9):
+            ligne = []
             y_position = y_start + y_increment * i
             for j in range(9):
                 x_position = x_start + x_increment * j
@@ -83,7 +84,7 @@ class Game:
                 else:
                     nb_pawns = 1
 
-                all_piles_append(
+                ligne.append(
                     game_management.PawnsPile(
                         self.screen, self.all_piles, couleur,
                         position=(x_position, y_position),
@@ -93,12 +94,17 @@ class Game:
 
                 couleur = "noir" if couleur == "blanc" else "blanc"
 
+            all_piles_append(ligne)
+
     def handling_events(self):
         for event in pygame.event.get():
+
             if event.type == pygame.QUIT:
                 self.running = False
-            for pile in self.all_piles:
-                pile.handle_event(event)
+
+            for ligne in self.all_piles:
+                for pile in ligne:
+                    pile.handle_event(event)
 
     def update(self):
 
@@ -108,8 +114,9 @@ class Game:
             self.timer.tick()
             self.timer.update_timer = 0  # Réinitialiser le compteur
 
-        for pile in self.all_piles:
-            pile.update()
+        for ligne in self.all_piles:
+            for pile in ligne:
+                pile.update()
 
         self.player1.update_score()
         self.player2.update_score()
@@ -144,9 +151,9 @@ class Game:
 
         self.timer.draw(self.screen)
 
-
-        for pile in self.all_piles:
-            pile.draw()
+        for ligne in self.all_piles:
+            for pile in ligne:
+                pile.draw()
 
         pygame.display.flip()
 
