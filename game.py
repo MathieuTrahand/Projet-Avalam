@@ -32,20 +32,24 @@ class Game:
             xy=(self.windows_size[0] // 2, self.windows_size[1] // 2),
             size=(min(self.windows_size), min(self.windows_size))
         )
-
+        self.resume = graphic_interface.Image(
+            path="IMAGES/bouton_pause.png",
+            xy=(self.windows_size[0] *0.05, 0.05 * self.windows_size[1]),
+            size=(min(self.windows_size) * 0.07, min(self.windows_size) * 0.07)
+        )
         self.black_pawn = graphic_interface.Image(
             path="IMAGES/boule noir.png",
-            xy=(self.windows_size[0] // 1.08, 0.07 * self.windows_size[1]),
-            size=(min(self.windows_size) * 0.1, min(self.windows_size) * 0.1)
+            xy=(self.windows_size[0] *0.05, 0.24 * self.windows_size[1]),
+            size=(min(self.windows_size) * 0.05, min(self.windows_size) * 0.05)
         )
         self.white_pawn = graphic_interface.Image(
             path="IMAGES/boule blanche.png",
-            xy=(self.windows_size[0] * 0.07, 0.07 * self.windows_size[1]),
-            size=(min(self.windows_size) * 0.1, min(self.windows_size) * 0.1)
+            xy=(self.windows_size[0] * 0.05, 0.14 * self.windows_size[1]),
+            size=(min(self.windows_size) * 0.05, min(self.windows_size) * 0.05)
         )
 
         self.timer = graphic_interface.Timer(
-            position=(self.windows_size[0] / 2, self.windows_size[1] * 0.08),
+            position=(self.windows_size[0] *0.165, self.windows_size[1] * 0.05),
             anchor='center'
         )
 
@@ -124,28 +128,28 @@ class Game:
     def display(self):
         self.bg.draw(self.screen)
         self.black_pawn.draw(self.screen)
-
+        self.resume.draw(self.screen)
         self.white_pawn.draw(self.screen),
 
         self.player1.name_text.draw(
             self.screen,
-            position=(self.windows_size[0] * 0.14, self.windows_size[1] * 0.04)
+            position=(self.windows_size[0] * 0.08, self.windows_size[1] * 0.11)
         )
 
         self.player1.score_text.draw(
             self.screen,
-            position=(self.windows_size[0] * 0.14, self.windows_size[1] * 0.1)
+            position=(self.windows_size[0] * 0.08, self.windows_size[1] * 0.155)
         )
 
         self.player2.name_text.draw(
             self.screen,
-            position=(self.windows_size[0] * 0.86, self.windows_size[1] * 0.04),
+            position=(self.windows_size[0] * 0.23, self.windows_size[1] * 0.21),
             anchor='topright'
         )
 
         self.player2.score_text.draw(
             self.screen,
-            position=(self.windows_size[0] * 0.86, self.windows_size[1] * 0.1),
+            position=(self.windows_size[0] * 0.22, self.windows_size[1] * 0.255),
             anchor='topright'
         )
 
