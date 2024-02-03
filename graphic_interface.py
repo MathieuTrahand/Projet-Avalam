@@ -1,6 +1,6 @@
 import pygame
 
-windows_size = (650, 650)
+windows_size = (600, 600)
 pygame.display.set_caption("AVALAM")
 
 # Définition des polices d'écriture
@@ -9,7 +9,7 @@ fonts = {
     'little_font': pygame.font.SysFont("centurygothic", int(0.025 * min(windows_size))),
     'big_font': pygame.font.SysFont("centurygothic", int(0.045 * min(windows_size)))
 
-    #'error_font': pygame.font.SysFont("Consolas", int(0.03 * min(windows_size)))
+    # 'error_font': pygame.font.SysFont("Consolas", int(0.03 * min(windows_size)))
 }
 
 
@@ -23,7 +23,8 @@ class Image:
         else:
             self.size = size
 
-        self.image = pygame.transform.scale(self.image, self.size)
+        # Redimensionner l'image avec interpolation bilinéaire pour un rendu plus lisse
+        self.image = pygame.transform.smoothscale(self.image, self.size)
         self.rect = self.image.get_rect(center=xy)
 
     def draw(self, screen):
@@ -105,22 +106,16 @@ class Button:
         self.rect.topleft = (x, y)
         self.clicked = False
 
-    def draw(self, surface):
-        action = False
-        # get mouse position
-        pos = pygame.mouse.get_pos()
-
-        # check mouseover and clicked conditions
-        if self.rect.collidepoint(pos):
-            if pygame.mouse.get_pressed()[0] == 1 and self.clicked == False:
+    def handle_event(self, event):
+        if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+            if self.rect.collidepoint(event.pos):
                 self.clicked = True
-                action = True
+        elif event.type == pygame.MOUSEBUTTONUP and event.button == 1:
+            if self.clicked:
+                self.clicked = False
 
-        if pygame.mouse.get_pressed()[0] == 0:
-            self.clicked = False
 
-        # draw button on screen
+
+
+    def draw(self, surface):
         surface.blit(self.image, (self.rect.x, self.rect.y))
-
-        return action
-

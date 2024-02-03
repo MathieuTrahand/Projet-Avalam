@@ -25,9 +25,10 @@ class Player:
 
     def update_score(self):
         self.score = 0
-        for pile in self.all_piles:
-            if pile.nb_pawns > 0 and pile.color == self.color:
-                self.score += 1
+        for ligne in self.all_piles:
+            for pile in ligne:
+                if pile.nb_pawns > 0 and pile.color == self.color:
+                    self.score += 1
 
         self.score_text.update(text=f"score : {str(self.score)}")
 
@@ -79,8 +80,10 @@ class PawnsPile:
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             if self.rect.collidepoint(event.pos):
                 self.dragging = True
-                self.all_piles.remove(self)
-                self.all_piles.append(self)
+                for i in range(len(self.all_piles)):
+                    if self in self.all_piles[i]:
+                        self.all_piles[i].remove(self)
+                        self.all_piles[i].append(self)
                 mouse_x, mouse_y = event.pos
                 self.offset = [mouse_x - self.rect.x, mouse_y - self.rect.y]
 
@@ -91,16 +94,17 @@ class PawnsPile:
                 closest_pile = None
                 min_distance = float('inf')  # prend le plus grand nombre possible
 
-                for pile in pygame.sprite.spritecollide(self, self.all_piles, False):
-                    if pile != self and self.rect.colliderect(pile.rect):  # Vérifier la collision
+                for ligne in self.all_piles:
+                    for pile in pygame.sprite.spritecollide(self, ligne, False):
+                        if pile != self and self.rect.colliderect(pile.rect):  # Vérifier la collision
 
-                        if pile != self:
-                            distance = pygame.math.Vector2(pile.rect.center) - pygame.math.Vector2(self.rect.center)
-                            distance = distance.length()
+                            if pile != self:
+                                distance = pygame.math.Vector2(pile.rect.center) - pygame.math.Vector2(self.rect.center)
+                                distance = distance.length()
 
-                            if distance < min_distance:
-                                min_distance = distance
-                                closest_pile = pile
+                                if distance < min_distance:
+                                    min_distance = distance
+                                    closest_pile = pile
 
                 if closest_pile is not None:
                     if closest_pile.nb_pawns != 0 and closest_pile.nb_pawns + self.nb_pawns <= 5:
