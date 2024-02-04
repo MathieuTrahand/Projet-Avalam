@@ -78,14 +78,11 @@ class PawnsPile:
 
     def handle_event(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-            if self.rect.collidepoint(event.pos):
-                self.dragging = True
-                for i in range(len(self.all_piles)):
-                    if self in self.all_piles[i]:
-                        self.all_piles[i].remove(self)
-                        self.all_piles[i].append(self)
-                mouse_x, mouse_y = event.pos
-                self.offset = [mouse_x - self.rect.x, mouse_y - self.rect.y]
+            if 0 < self.nb_pawns < 5:
+                if self.rect.collidepoint(event.pos):
+                    self.dragging = True
+                    mouse_x, mouse_y = event.pos
+                    self.offset = [mouse_x - self.rect.x, mouse_y - self.rect.y]
 
         elif event.type == pygame.MOUSEBUTTONUP and event.button == 1:
             if self.dragging:
