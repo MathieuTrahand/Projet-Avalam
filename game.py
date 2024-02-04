@@ -151,9 +151,16 @@ class Game:
 
         self.timer.draw(self.screen)
 
+        pile_in_drag = None
         for ligne in self.all_piles:
             for pile in ligne:
-                pile.draw()
+                if pile.dragging:
+                    pile_in_drag = pile
+                else:
+                    pile.draw()
+        if pile_in_drag:
+            pile_in_drag.draw()
+
 
         pygame.display.flip()
 
