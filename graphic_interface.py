@@ -114,8 +114,36 @@ class Button:
             if self.clicked:
                 self.clicked = False
 
-
-
-
     def draw(self, surface):
         surface.blit(self.image, (self.rect.x, self.rect.y))
+
+
+class Input:
+
+    def __init__(self, x, y, width, height, font=fonts['little_font'], text: str = '',
+                 colour_text: tuple = (135, 135, 135)):
+        self.rect = pygame.Rect(x, y, width, height)
+        self.font = font
+        self.text = text
+        self.colour = colour_text
+        self.clic = False
+
+    def handling_events(self, event):
+
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            if self.rect.collidepoint(event.pos):
+                self.clic = not self.clic
+                self.text = ''
+            else:
+                self.clic = False
+
+        elif event.type == pygame.KEYDOWN:
+            if self.clic:
+                if event.key == pygame.K_BACKSPACE:
+                    self.text = self.text[:-1]
+                else:
+                    self.text += event.unicode
+
+    def draw(self, screen):
+        text_surface = self.font.render(self.text, True, self.colour)
+        screen.blit(text_surface, (self.rect.x + 5, self.rect.y + 5))

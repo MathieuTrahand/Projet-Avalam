@@ -2,46 +2,60 @@ import pygame
 import graphic_interface
 import game_management
 
+
 #
 
 class InputInterface:
-    def __init__(self,x,y,width, height,font=graphic_interface.fonts['little_font'],text:str='',colour_text:tuple=(135,135,135)):
-        self.screen=pygame.display.set_mode(graphic_interface.windows_size)
-        self.clock=pygame.time.Clock()
-        self.rect=pygame.Rect(x,y,width,height)
-        self.font=font
-        self.text=text
-        self.colour=colour_text
-        self.background=graphic_interface.Image("Images\Interface_Login.png",(0.5*graphic_interface.windows_size[0],0.6*graphic_interface.windows_size[1]),
-                                                (1.33*graphic_interface.windows_size[0],1.33*graphic_interface.windows_size[1]))
-        self.clic=False
+    def __init__(self):
+        self.screen = pygame.display.set_mode(graphic_interface.windows_size)
+        self.running = True
+        self.clock = pygame.time.Clock()
+
+        self.background = graphic_interface.Image(
+            "Images/Interface_Login.png", (
+                0.5 * graphic_interface.windows_size[0], 0.6 * graphic_interface.windows_size[1]
+            ),
+            (1.33 * graphic_interface.windows_size[0],
+             1.33 * graphic_interface.windows_size[1])
+        )
+
+        self.input1 = graphic_interface.Input(
+            0.458 * graphic_interface.windows_size[0],
+            0.492 * graphic_interface.windows_size[1],
+            0.33 * graphic_interface.windows_size[0],
+            0.33 * graphic_interface.windows_size[1],
+            text='Player1'
+        )
+
+        self.input2 = graphic_interface.Input(
+            0.458 * graphic_interface.windows_size[0],
+            0.692 * graphic_interface.windows_size[1],
+            0.33 * graphic_interface.windows_size[0],
+            0.33 * graphic_interface.windows_size[1],
+            text='Player2'
+        )
 
     def handling_events(self):
         for event in pygame.event.get():
+
             if event.type == pygame.QUIT:
-                self.game.running = False
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                if self.rect.collidepoint(event.pos):
-                    self.clic=not self.clic
-                    self.text = ''
-                else:
-                    self.clic=False
-            if event.type == pygame.KEYDOWN:
-                if self.clic:
-                    if event.key == pygame.K_BACKSPACE:
-                        self.text = self.text[:-1]
-                    else:
-                        self.text += event.unicode
+                self.running = False
 
-
-    def update(self):
-        self.background.draw(self.screen)
-        text_surface= self.font.render(self.text, True, self.colour)
-        self.screen.blit(text_surface, (self.rect.x + 5, self.rect.y + 5))
-        self.clock.tick(60)
+            else:
+                self.input1.handling_events(event)
+                self.input2.handling_events(event)
 
     def display(self):
-        pass
+        self.background.draw(self.screen)
+        self.input1.draw(self.screen)
+        self.input2.draw(self.screen)
+        pygame.display.flip()
+
+    def run(self):
+        while self.running:
+            self.handling_events()
+            self.display()
+            self.clock.tick(60)
 
 
 class Game:
@@ -59,12 +73,12 @@ class Game:
         )
         self.resume = graphic_interface.Image(
             path="IMAGES/bouton_pause.png",
-            xy=(self.windows_size[0] *0.05, 0.05 * self.windows_size[1]),
+            xy=(self.windows_size[0] * 0.05, 0.05 * self.windows_size[1]),
             size=(min(self.windows_size) * 0.07, min(self.windows_size) * 0.07)
         )
         self.black_pawn = graphic_interface.Image(
             path="IMAGES/boule noir.png",
-            xy=(self.windows_size[0] *0.05, 0.24 * self.windows_size[1]),
+            xy=(self.windows_size[0] * 0.05, 0.24 * self.windows_size[1]),
             size=(min(self.windows_size) * 0.05, min(self.windows_size) * 0.05)
         )
         self.white_pawn = graphic_interface.Image(
@@ -74,7 +88,7 @@ class Game:
         )
 
         self.timer = graphic_interface.Timer(
-            position=(self.windows_size[0] *0.165, self.windows_size[1] * 0.05),
+            position=(self.windows_size[0] * 0.165, self.windows_size[1] * 0.05),
             anchor='center'
         )
 
@@ -189,7 +203,6 @@ class Game:
                     pile.draw()
         if pile_in_drag:
             pile_in_drag.draw()
-
 
         pygame.display.flip()
 

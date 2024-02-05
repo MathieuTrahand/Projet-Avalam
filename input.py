@@ -76,7 +76,7 @@ while True:
     clock.tick(60)
 
 '''
-player1=InputInterface(0.458*windows_size[0],0.492*windows_size[1],50,50,'Player1')
+player1=InputInterface
 player2=InputInterface(0.458*windows_size[0],0.692*windows_size[1],50,50,'Player2')
 pygame.display.flip()
 
