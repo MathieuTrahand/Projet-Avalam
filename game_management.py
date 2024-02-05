@@ -1,12 +1,10 @@
-from graphic_interface import Text, fonts
+from graphic_interface import Text, fonts, Image
 import pygame
 
 empty_surface = pygame.Surface((0, 0))
 
 pawns_images = {}
 
-
-#
 
 class Player:
     def __init__(self, name, all_piles, color="blanc"):
@@ -36,19 +34,21 @@ class Player:
 
 
 class PawnsPile:
-    def __init__(self, screen, all_piles, color="blanc", position=(0, 0), nb_pawns=1):
+    def __init__(self, screen, all_piles, color="blanc", position=(0, 0), nb_pawns=1, pawn_distance=(0, 0)):
         self.screen = screen
         self.size = min(self.screen.get_size()) / 20
         self.color = color
         self.nb_pawns = nb_pawns
         self.initial_position = position
         self.dragging = False
-        self.offset = [0, 0]
         self.all_piles = all_piles
         self.image = self.load_image()
-        self.rect = self.image.get_rect(topleft=self.initial_position)
 
-        self.pawn_distance = self.min_distance()[1]
+        self.rect = self.image.get_rect(center=self.initial_position)
+
+        self.offset = [self.initial_position[0] - self.rect.x, self.initial_position[1] - self.rect.y]
+
+        self.pawn_distance = pawn_distance
 
     def load_image(self):
         if self.nb_pawns > 0:
@@ -60,7 +60,7 @@ class PawnsPile:
             if key not in pawns_images:
                 image_path = f"IMAGES/pion_{self.color}_{self.nb_pawns}.png"  # À adapter
                 image = pygame.image.load(image_path)
-                pawns_images[key] = pygame.transform.scale(image, (self.size, self.size))
+                pawns_images[key] = pygame.transform.smoothscale(image, (self.size, self.size))
 
             return pawns_images[key]
         else:
@@ -77,8 +77,12 @@ class PawnsPile:
     def update(self):
         if self.dragging:
             mouse_x, mouse_y = pygame.mouse.get_pos()
-            self.rect.x = mouse_x - self.offset[0]
-            self.rect.y = mouse_y - self.offset[1]
+
+            if abs(self.initial_position[0] - mouse_x) <= self.pawn_distance[0] + 0.6 * self.size:
+                self.rect.x = mouse_x - self.offset[0]
+
+            if abs(self.initial_position[1] - mouse_y) <= self.pawn_distance[1] + 0.6 * self.size:
+                self.rect.y = mouse_y - self.offset[1]
 
     def min_distance(self):
         closest_pile = None
@@ -96,7 +100,7 @@ class PawnsPile:
                             min_distance = distance
                             closest_pile = pile
 
-        return closest_pile, min_distance
+        return closest_pile
 
     def handle_event(self, event):
 
@@ -104,14 +108,12 @@ class PawnsPile:
             if 0 < self.nb_pawns < 5:
                 if self.rect.collidepoint(event.pos):
                     self.dragging = True
-                    mouse_x, mouse_y = event.pos
-                    self.offset = [mouse_x - self.rect.x, mouse_y - self.rect.y]
 
         elif event.type == pygame.MOUSEBUTTONUP and event.button == 1:
             if self.dragging:
                 self.dragging = False
 
-                closest_pile = self.min_distance()[0]
+                closest_pile = self.min_distance() # trouver la pile la plus proche
 
                 if closest_pile is not None:
                     if closest_pile.nb_pawns != 0 and closest_pile.nb_pawns + self.nb_pawns <= 5:
@@ -129,4 +131,4 @@ class PawnsPile:
                         self.draw(self.screen)
 
                 # revenir à la position initiale
-                self.rect = self.image.get_rect(topleft=self.initial_position)
+                self.rect = self.image.get_rect(center=self.initial_position)

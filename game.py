@@ -113,12 +113,10 @@ class Game:
 
     def create_piles(self):
         couleur = "blanc"
-        window_width = self.windows_size[0]
-        window_height = self.windows_size[1]
-        x_start = window_width * 0.225
-        y_start = window_height * 0.223
-        x_increment = window_width * 0.0625
-        y_increment = window_height * 0.063
+        x_start = self.windows_size[0] * 0.25
+        y_start = self.windows_size[1] * 0.247
+        x_increment = self.windows_size[0] * 0.0625
+        y_increment = self.windows_size[1] * 0.063
         all_piles_append = self.all_piles.append
 
         # Liste des coordonnées qui ne peuvent pas avoir de pile
@@ -144,7 +142,8 @@ class Game:
                     game_management.PawnsPile(
                         self.screen, self.all_piles, couleur,
                         position=(x_position, y_position),
-                        nb_pawns=nb_pawns
+                        nb_pawns=nb_pawns,
+                        pawn_distance=(x_increment, y_increment)
                     )
                 )
 
@@ -214,6 +213,7 @@ class Game:
                     pile_in_drag = pile
                 else:
                     pile.draw()
+
         if pile_in_drag:
             pile_in_drag.draw()
 
