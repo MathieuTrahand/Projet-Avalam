@@ -2,7 +2,7 @@ import pygame
 
 windows_size = (600, 600)
 pygame.display.set_caption("AVALAM")
-
+#
 # Définition des polices d'écriture
 fonts = {
     'basic_font': pygame.font.SysFont("centurygothic", int(0.03 * min(windows_size))),

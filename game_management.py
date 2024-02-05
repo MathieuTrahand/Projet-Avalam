@@ -4,7 +4,7 @@ import pygame
 empty_surface = pygame.Surface((0, 0))
 
 pawns_images = {}
-
+#
 
 class Player:
     def __init__(self, name, all_piles, color="blanc"):
