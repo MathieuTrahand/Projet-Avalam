@@ -38,6 +38,7 @@ class InputInterface:
         self.background.draw(self.screen)
         text_surface= self.font.render(self.text, True, self.colour)
         self.screen.blit(text_surface, (self.rect.x + 5, self.rect.y + 5))
+        self.clock.tick(60)
 
     def display(self):
         pass

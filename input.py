@@ -1,7 +1,8 @@
 import pygame, sys
 pygame.init()
 from graphic_interface import Image,fonts,windows_size
-
+from game import InputInterface
+'''
 a=windows_size
 pygame.init()
 clock=pygame.time.Clock()
@@ -11,8 +12,8 @@ user_text='Pseudo Player 1'
 user_text_2='Pseudo Player 2'
 
 
-input_rect_1=pygame.Rect(0.458*a[0],0.492*a[1],100,50)
-input_rect_2=pygame.Rect(0.458*a[0],0.692*a[1],100,50)
+input_rect_1=pygame.Rect(0.458*a[0],0.492*a[1],50,50)
+input_rect_2=pygame.Rect(0.458*a[0],0.692*a[1],50,50)
 
 
 color_passive=pygame.Color('white')
@@ -34,11 +35,15 @@ while True:
             if input_rect_1.collidepoint(event.pos):
                   clic1=True
                   user_text=''
+            else:
+                clic1=False
 
         if event.type == pygame.MOUSEBUTTONDOWN:
             if input_rect_2.collidepoint(event.pos):
                   clic2=True
                   user_text_2=''
+            else:
+                clic2=False
 
 
         if event.type==pygame.KEYDOWN:
@@ -69,3 +74,10 @@ while True:
 
     pygame.display.flip()
     clock.tick(60)
+
+'''
+player1=InputInterface(0.458*windows_size[0],0.492*windows_size[1],50,50,'Player1')
+player2=InputInterface(0.458*windows_size[0],0.692*windows_size[1],50,50,'Player2')
+pygame.display.flip()
+
+
