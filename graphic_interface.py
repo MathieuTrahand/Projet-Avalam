@@ -7,7 +7,7 @@ pygame.display.set_caption("AVALAM")
 fonts = {
     'basic_font': pygame.font.SysFont("centurygothic", int(0.03 * min(windows_size))),
     'little_font': pygame.font.SysFont("centurygothic", int(0.025 * min(windows_size))),
-    'big_font': pygame.font.SysFont("centurygothic", int(0.04* min(windows_size)))
+    'big_font': pygame.font.SysFont("centurygothic", int(0.04 * min(windows_size)))
 
     # 'error_font': pygame.font.SysFont("Consolas", int(0.03 * min(windows_size)))
 }
@@ -45,7 +45,7 @@ class Timer:
         self.update_timer = 0
 
         self.text = Text(
-            "Time:00:00",
+            "Time : 00:00",
             self.font,
             self.text_col,
             self.bg_col,
@@ -54,7 +54,7 @@ class Timer:
         )
 
     def update(self):
-        self.text.text = f"TIME:{self.minutes:02d}:{self.seconds:02d}"
+        self.text.text = f"TIME : {self.minutes:02d}:{self.seconds:02d}"
         self.text.update()
 
     def draw(self, surface):
