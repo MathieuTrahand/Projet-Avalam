@@ -1,6 +1,6 @@
 import pygame
 
-windows_size = (600, 600)
+windows_size = (850, 850)
 pygame.display.set_caption("AVALAM")
 
 # Définition des polices d'écriture
@@ -99,10 +99,11 @@ class Text:
 
 
 class Button:
-    def __init__(self, x, y, image, scale):
-        width = image.get_width()
+    def __init__(self, x, y, image: str, size):
+        image = pygame.image.load(image)
+        width= image.get_width()
         height = image.get_height()
-        self.image = pygame.transform.scale(image, (int(width * scale), int(height * scale)))
+        self.path = pygame.transform.scale(image, (int(width * size), int(height * size)))
         self.rect = self.image.get_rect()
         self.rect.topleft = (x, y)
         self.clicked = False

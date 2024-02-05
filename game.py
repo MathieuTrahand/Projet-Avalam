@@ -18,6 +18,13 @@ class InputInterface:
             (1.33 * graphic_interface.windows_size[0],
              1.33 * graphic_interface.windows_size[1])
         )
+        self.play = graphic_interface.Image(
+            "Images/bouton_play.png", (
+                0.5 * graphic_interface.windows_size[0], 0.6 * graphic_interface.windows_size[1]
+            ),
+            (1.33 * graphic_interface.windows_size[0],
+             1.33 * graphic_interface.windows_size[1])
+        )
 
         self.input1 = graphic_interface.Input(
             0.55 * graphic_interface.windows_size[0],
