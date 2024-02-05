@@ -20,19 +20,17 @@ class InputInterface:
         )
 
         self.input1 = graphic_interface.Input(
-            0.458 * graphic_interface.windows_size[0],
-            0.492 * graphic_interface.windows_size[1],
-            0.16 * graphic_interface.windows_size[0],
-            0.16 * graphic_interface.windows_size[1],
-            text='Player1'
+            0.55 * graphic_interface.windows_size[0],
+            0.52 * graphic_interface.windows_size[1],
+            text='Player1',
+            second_color='white'
         )
 
         self.input2 = graphic_interface.Input(
-            0.458 * graphic_interface.windows_size[0],
-            0.692 * graphic_interface.windows_size[1],
-            0.16 * graphic_interface.windows_size[0],
-            0.16 * graphic_interface.windows_size[1],
-            text='Player2'
+            0.55 * graphic_interface.windows_size[0],
+            0.72 * graphic_interface.windows_size[1],
+            text='Player2',
+            second_color='black'
         )
 
     def handling_events(self):

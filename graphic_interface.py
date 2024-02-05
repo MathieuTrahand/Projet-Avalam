@@ -7,7 +7,8 @@ pygame.display.set_caption("AVALAM")
 fonts = {
     'basic_font': pygame.font.SysFont("centurygothic", int(0.03 * min(windows_size))),
     'little_font': pygame.font.SysFont("centurygothic", int(0.025 * min(windows_size))),
-    'big_font': pygame.font.SysFont("centurygothic", int(0.04 * min(windows_size)))
+    'big_font': pygame.font.SysFont("centurygothic", int(0.04 * min(windows_size))),
+    'input_font': pygame.font.SysFont("centurygothic", int(0.06 * min(windows_size)))
 
     # 'error_font': pygame.font.SysFont("Consolas", int(0.03 * min(windows_size)))
 }
@@ -48,7 +49,6 @@ class Timer:
             "Time : 00:00",
             self.font,
             self.text_col,
-            self.bg_col,
             self.position,
             self.anchor
         )
@@ -70,23 +70,24 @@ class Timer:
 
 class Text:
     def __init__(self, text="", font: pygame.font = None, text_col=pygame.Color("black"),
-                 bg_col=pygame.Color("white"), position=(0, 0), anchor='topleft'):
+                 position=(0, 0), anchor='topleft'):
 
         self.text = text
         self.font = font if font is not None else fonts['basic_font']
-        self.bg_col = bg_col
         self.text_col = text_col
         self.position = position
         self.anchor = anchor.lower()
         self.update()
 
-    def update(self, position=None, anchor=None, text=None):
+    def update(self, position=None, anchor=None, text=None, text_col=None):
         if position is not None:
             self.position = position
         if anchor is not None:
             self.anchor = anchor.lower()
         if text is not None:
             self.text = text
+        if text_col is not None:
+            self.text_col = text_col
 
         self.img = self.font.render(self.text, True, self.text_col)
         self.rect = self.img.get_rect(**{self.anchor: self.position})
@@ -120,30 +121,29 @@ class Button:
 
 class Input:
 
-    def __init__(self, x, y, width, height, font=fonts['little_font'], text: str = '',
-                 colour_text: tuple = (135, 135, 135)):
-        self.rect = pygame.Rect(x, y, width, height)
-        self.font = font
-        self.text = text
-        self.colour = colour_text
+    def __init__(self, x, y, font=fonts['input_font'], text: str = '',
+                 text_colour=pygame.Color('grey'), second_color=pygame.Color('grey')):
+
+        self.text = Text(text, font, text_colour, (x, y), 'center')
         self.clic = False
+        self.second_color = second_color
 
     def handling_events(self, event):
 
         if event.type == pygame.MOUSEBUTTONDOWN:
-            if self.rect.collidepoint(event.pos):
-                self.clic = not self.clic
-                self.text = ''
+
+            if self.text.rect.collidepoint(event.pos):
+                self.clic = True
+                self.text.update(text='', text_col=self.second_color)
             else:
                 self.clic = False
 
         elif event.type == pygame.KEYDOWN:
             if self.clic:
                 if event.key == pygame.K_BACKSPACE:
-                    self.text = self.text[:-1]
+                    self.text.update(text=self.text.text[:-1])
                 else:
-                    self.text += event.unicode
+                    self.text.update(text=self.text.text + event.unicode)
 
     def draw(self, screen):
-        text_surface = self.font.render(self.text, True, self.colour)
-        screen.blit(text_surface, (self.rect.x + 5, self.rect.y + 5))
+        self.text.draw(screen)
