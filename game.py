@@ -21,14 +21,14 @@ class InputInterface:
         self.input1 = graphic_interface.Input(
             0.55 * graphic_interface.windows_size[0],
             0.52 * graphic_interface.windows_size[1],
-            text='Player1',
+            text='Player 1',
             second_color='white'
         )
 
         self.input2 = graphic_interface.Input(
             0.55 * graphic_interface.windows_size[0],
             0.72 * graphic_interface.windows_size[1],
-            text='Player2',
+            text='Player 2',
             second_color='black'
         )
 
@@ -194,14 +194,12 @@ class Game:
 
         self.player2.name_text.draw(
             self.screen,
-            position=(self.windows_size[0] * 0.23, self.windows_size[1] * 0.21),
-            anchor='topright'
+            position=(self.windows_size[0] * 0.08, self.windows_size[1] * 0.21),
         )
 
         self.player2.score_text.draw(
             self.screen,
-            position=(self.windows_size[0] * 0.22, self.windows_size[1] * 0.255),
-            anchor='topright'
+            position=(self.windows_size[0] * 0.08, self.windows_size[1] * 0.255),
         )
 
         self.timer.draw(self.screen)
