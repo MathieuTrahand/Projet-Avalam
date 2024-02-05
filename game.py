@@ -9,21 +9,13 @@ class InputInterface:
     def __init__(self):
         self.screen = pygame.display.set_mode(graphic_interface.windows_size)
         self.running = True
+        self.quit = False
         self.clock = pygame.time.Clock()
 
         self.background = graphic_interface.Image(
-            "Images/Interface_Login.png", (
-                0.5 * graphic_interface.windows_size[0], 0.6 * graphic_interface.windows_size[1]
-            ),
-            (1.33 * graphic_interface.windows_size[0],
-             1.33 * graphic_interface.windows_size[1])
-        )
-        self.play = graphic_interface.Image(
-            "Images/bouton_play.png", (
-                0.5 * graphic_interface.windows_size[0], 0.6 * graphic_interface.windows_size[1]
-            ),
-            (1.33 * graphic_interface.windows_size[0],
-             1.33 * graphic_interface.windows_size[1])
+            "Images/Interface_Login.png",
+            (0.5 * graphic_interface.windows_size[0], 0.6 * graphic_interface.windows_size[1]),
+            (1.33 * graphic_interface.windows_size[0], 1.33 * graphic_interface.windows_size[1])
         )
 
         self.input1 = graphic_interface.Input(
@@ -40,20 +32,31 @@ class InputInterface:
             second_color='black'
         )
 
+        self.play = graphic_interface.Button(
+            "Images/bouton_play.png",
+            (0.5 * graphic_interface.windows_size[0], 0.9 * graphic_interface.windows_size[1]),
+            (0.4 * graphic_interface.windows_size[0], 0.15 * graphic_interface.windows_size[1])
+        )
+
     def handling_events(self):
         for event in pygame.event.get():
 
             if event.type == pygame.QUIT:
+                self.quit = True
                 self.running = False
 
-            else:
-                self.input1.handling_events(event)
-                self.input2.handling_events(event)
+            self.input1.handling_events(event)
+            self.input2.handling_events(event)
+
+            self.play.handling_event(event)
+            if self.play.action:
+                self.running = False
 
     def display(self):
         self.background.draw(self.screen)
         self.input1.draw(self.screen)
         self.input2.draw(self.screen)
+        self.play.draw(self.screen)
         pygame.display.flip()
 
     def run(self):
@@ -62,30 +65,35 @@ class InputInterface:
             self.display()
             self.clock.tick(60)
 
+    def get_players(self):
+        return self.input1.text.text, self.input2.text.text
+
 
 class Game:
-    def __init__(self):
+    def __init__(self, players: (str, str) = ("Player 1", "Player 2")):
         self.screen = pygame.display.set_mode(graphic_interface.windows_size)
         self.running = True
         self.clock = pygame.time.Clock()
         self.windows_size = self.screen.get_size()
-        self.window = "game"
 
         self.bg = graphic_interface.Image(
             path='IMAGES/fond écran.png',
             xy=(self.windows_size[0] // 2, self.windows_size[1] // 2),
             size=(min(self.windows_size), min(self.windows_size))
         )
+
         self.resume = graphic_interface.Image(
             path="IMAGES/bouton_pause.png",
             xy=(self.windows_size[0] * 0.05, 0.05 * self.windows_size[1]),
             size=(min(self.windows_size) * 0.07, min(self.windows_size) * 0.07)
         )
+
         self.black_pawn = graphic_interface.Image(
             path="IMAGES/boule noir.png",
             xy=(self.windows_size[0] * 0.05, 0.24 * self.windows_size[1]),
             size=(min(self.windows_size) * 0.05, min(self.windows_size) * 0.05)
         )
+
         self.white_pawn = graphic_interface.Image(
             path="IMAGES/boule blanche.png",
             xy=(self.windows_size[0] * 0.05, 0.14 * self.windows_size[1]),
@@ -100,8 +108,8 @@ class Game:
         self.all_piles = []
         self.create_piles()
 
-        self.player1 = game_management.Player(name="Player 1", all_piles=self.all_piles, color="blanc")
-        self.player2 = game_management.Player(name="Player 2", all_piles=self.all_piles, color="noir")
+        self.player1 = game_management.Player(name=players[0], all_piles=self.all_piles, color="blanc")
+        self.player2 = game_management.Player(name=players[1], all_piles=self.all_piles, color="noir")
 
     def create_piles(self):
         couleur = "blanc"
@@ -213,17 +221,7 @@ class Game:
 
     def run(self):
         while self.running:
-
-            if self.window == "input interface":
-                interface = InputInterface(self)
-
-                interface.handling_events()
-                interface.update()
-                interface.display()
-                self.clock.tick(60)
-
-            elif self.window == "game":
-                self.handling_events()
-                self.update()
-                self.display()
-                self.clock.tick(60)
+            self.handling_events()
+            self.update()
+            self.display()
+            self.clock.tick(60)

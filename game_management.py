@@ -4,6 +4,8 @@ import pygame
 empty_surface = pygame.Surface((0, 0))
 
 pawns_images = {}
+
+
 #
 
 class Player:
@@ -46,6 +48,8 @@ class PawnsPile:
         self.image = self.load_image()
         self.rect = self.image.get_rect(topleft=self.initial_position)
 
+        self.pawn_distance = self.min_distance()[1]
+
     def load_image(self):
         if self.nb_pawns > 0:
             # Charger l'image en fonction de la couleur et du nombre de pions
@@ -76,7 +80,26 @@ class PawnsPile:
             self.rect.x = mouse_x - self.offset[0]
             self.rect.y = mouse_y - self.offset[1]
 
+    def min_distance(self):
+        closest_pile = None
+        min_distance = float('inf')  # prend le plus grand nombre possible
+
+        for ligne in self.all_piles:
+            for pile in pygame.sprite.spritecollide(self, ligne, False):
+                if pile != self and self.rect.colliderect(pile.rect):  # Vérifier la collision
+
+                    if pile != self:
+                        distance = pygame.math.Vector2(pile.rect.center) - pygame.math.Vector2(self.rect.center)
+                        distance = distance.length()
+
+                        if distance < min_distance:
+                            min_distance = distance
+                            closest_pile = pile
+
+        return closest_pile, min_distance
+
     def handle_event(self, event):
+
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             if 0 < self.nb_pawns < 5:
                 if self.rect.collidepoint(event.pos):
@@ -88,20 +111,7 @@ class PawnsPile:
             if self.dragging:
                 self.dragging = False
 
-                closest_pile = None
-                min_distance = float('inf')  # prend le plus grand nombre possible
-
-                for ligne in self.all_piles:
-                    for pile in pygame.sprite.spritecollide(self, ligne, False):
-                        if pile != self and self.rect.colliderect(pile.rect):  # Vérifier la collision
-
-                            if pile != self:
-                                distance = pygame.math.Vector2(pile.rect.center) - pygame.math.Vector2(self.rect.center)
-                                distance = distance.length()
-
-                                if distance < min_distance:
-                                    min_distance = distance
-                                    closest_pile = pile
+                closest_pile = self.min_distance()[0]
 
                 if closest_pile is not None:
                     if closest_pile.nb_pawns != 0 and closest_pile.nb_pawns + self.nb_pawns <= 5:
