@@ -7,7 +7,7 @@ pygame.display.set_caption("AVALAM")
 fonts = {
     'basic_font': pygame.font.SysFont("centurygothic", int(0.03 * min(windows_size))),
     'little_font': pygame.font.SysFont("centurygothic", int(0.025 * min(windows_size))),
-    'big_font': pygame.font.SysFont("centurygothic", int(0.05 * min(windows_size)))
+    'big_font': pygame.font.SysFont("centurygothic", int(0.04* min(windows_size)))
 
     # 'error_font': pygame.font.SysFont("Consolas", int(0.03 * min(windows_size)))
 }
