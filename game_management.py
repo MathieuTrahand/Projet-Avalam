@@ -34,12 +34,15 @@ class Player:
 
 
 class PawnsPile:
-    def __init__(self, screen, all_piles, color="blanc", position=(0, 0), nb_pawns=1, pawn_distance=(0, 0)):
+    def __init__(self, screen, all_piles, color="blanc", initial_position=(0, 0), nb_pawns=1,
+                 pawn_distance=(0, 0), matrice_position=(0, 0)):
+
         self.screen = screen
         self.size = min(self.screen.get_size()) / 20
         self.color = color
         self.nb_pawns = nb_pawns
-        self.initial_position = position
+        self.initial_position = initial_position
+        self.matrice_position = matrice_position
         self.dragging = False
         self.can_drop = False
         self.all_piles = all_piles
@@ -77,6 +80,7 @@ class PawnsPile:
 
     def update(self):
         if self.dragging:
+            # gestion de la position de la pile
             mouse_x, mouse_y = pygame.mouse.get_pos()
 
             if abs(self.initial_position[0] - mouse_x) <= self.pawn_distance[0] + 0.6 * self.size:
@@ -101,6 +105,54 @@ class PawnsPile:
 
         return closest_pile
 
+    def can_drop_gestion(self, can_drop: bool = True):
+
+        i, j = self.matrice_position  # i ligne j colonne
+
+        # GESTION GAUCHE / DROITE & DIAGONALES
+
+        if j > 0:  # si on est pas tout à gauche de la matrice
+            pile = self.all_piles[i][j - 1]
+            if 0 < pile.nb_pawns and pile.nb_pawns + self.nb_pawns <= 5:  # on verifie que c'est possible
+                pile.can_drop = can_drop
+
+            if i > 0:  # si en plus on est pas tout en haut
+                pile = self.all_piles[i - 1][j - 1]  # on s'occupe de la diagonale haut gauche
+                if 0 < pile.nb_pawns and pile.nb_pawns + self.nb_pawns <= 5:
+                    pile.can_drop = can_drop
+
+            if i < 8:  # si en plus on est pas tout en bas
+                pile = self.all_piles[i + 1][j - 1]  # on s'occupe de la diagonale bas gauche
+                if 0 < pile.nb_pawns and pile.nb_pawns + self.nb_pawns <= 5:
+                    pile.can_drop = can_drop
+
+        if j < 8:  # si on est pas tout à droite
+            pile = self.all_piles[i][j + 1]
+            if 0 < pile.nb_pawns and pile.nb_pawns + self.nb_pawns <= 5:
+                pile.can_drop = can_drop
+
+            if i > 0:  # si en plus on est pas tout en haut
+                pile = self.all_piles[i - 1][j + 1]  # on s'occupe de la diagonale haut droite
+                if 0 < pile.nb_pawns and pile.nb_pawns + self.nb_pawns <= 5:
+                    pile.can_drop = can_drop
+
+            if i < 8:  # si en plus on est pas tout en bas
+                pile = self.all_piles[i + 1][j + 1]  # on s'occupe de la diagonale bas droite
+                if 0 < pile.nb_pawns and pile.nb_pawns + self.nb_pawns <= 5:
+                    pile.can_drop = can_drop
+
+        # GESTION HAUT / BAS
+
+        if i > 0:  # si on est pas tout en haut
+            pile = self.all_piles[i - 1][j]
+            if 0 < pile.nb_pawns and pile.nb_pawns + self.nb_pawns <= 5:
+                pile.can_drop = can_drop
+
+        if i < 8:  # si on est pas tout en bas
+            pile = self.all_piles[i + 1][j]
+            if 0 < pile.nb_pawns and pile.nb_pawns + self.nb_pawns <= 5:
+                pile.can_drop = can_drop
+
     def handle_event(self, event):
 
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
@@ -110,6 +162,7 @@ class PawnsPile:
                     self.dragging = True
 
                     # gestion des piles où on peut déposer la notre
+                    self.can_drop_gestion(True)
 
         elif event.type == pygame.MOUSEBUTTONUP and event.button == 1:
             if self.dragging:
@@ -119,7 +172,7 @@ class PawnsPile:
 
                 if closest_pile is not None:
 
-                    if closest_pile.nb_pawns != 0 and closest_pile.nb_pawns + self.nb_pawns <= 5:
+                    if closest_pile.can_drop:
                         # Ajouter à la pile la plus proche avec collision
                         closest_pile.nb_pawns += self.nb_pawns
                         self.nb_pawns = 0
@@ -129,6 +182,9 @@ class PawnsPile:
 
                         closest_pile.image = closest_pile.load_image()
                         self.image = self.load_image()
+
+                # on remet tout à False
+                self.can_drop_gestion(False)
 
                 # revenir à la position initiale
                 self.rect = self.image.get_rect(center=self.initial_position)

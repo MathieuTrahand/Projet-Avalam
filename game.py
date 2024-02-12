@@ -145,9 +145,10 @@ class Game:
                 ligne.append(
                     game_management.PawnsPile(
                         self.screen, self.all_piles, couleur,
-                        position=(x_position, y_position),
+                        initial_position=(x_position, y_position),
                         nb_pawns=nb_pawns,
-                        pawn_distance=(x_increment, y_increment)
+                        pawn_distance=(x_increment, y_increment),
+                        matrice_position=(i, j)
                     )
                 )
 
