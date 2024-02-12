@@ -169,6 +169,11 @@ class Game:
                     for pile in ligne:
                         pile.handle_event(event)
 
+                self.pause_button.handling_event(event)
+
+                if self.pause_button.action:
+                    self.is_paused = True
+
     def update(self):
 
         # Mettre à jour le minuteur toutes les secondes
