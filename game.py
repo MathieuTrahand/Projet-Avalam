@@ -113,7 +113,6 @@ class Game:
 
         self.create_piles()
 
-
     def create_piles(self):
         self.display()
 
@@ -162,9 +161,13 @@ class Game:
             if event.type == pygame.QUIT:
                 self.running = False
 
-            for ligne in self.all_piles:
-                for pile in ligne:
-                    pile.handle_event(event)
+            if self.is_paused:
+                pass
+
+            else:
+                for ligne in self.all_piles:
+                    for pile in ligne:
+                        pile.handle_event(event)
 
     def update(self):
 
@@ -223,6 +226,9 @@ class Game:
 
         pygame.display.flip()
 
+    def pause_display(self):
+        pass
+
     def run(self):
         while self.running:
 
@@ -230,7 +236,9 @@ class Game:
                 self.handling_events()
                 self.update()
                 self.display()
-                self.clock.tick(60)
 
             else:
-                pass
+                self.handling_events()
+                self.pause_display()
+
+            self.clock.tick(60)

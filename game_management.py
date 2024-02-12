@@ -109,7 +109,7 @@ class PawnsPile:
                 if self.rect.collidepoint(event.pos):
                     self.dragging = True
 
-                    # gestion
+                    # gestion des piles où on peut déposer la notre
 
         elif event.type == pygame.MOUSEBUTTONUP and event.button == 1:
             if self.dragging:
