@@ -75,6 +75,7 @@ class Game:
         self.running = True
         self.clock = pygame.time.Clock()
         self.windows_size = self.screen.get_size()
+        self.is_paused = False
 
         self.bg = graphic_interface.Image(
             path='IMAGES/fond écran.png',
@@ -82,7 +83,7 @@ class Game:
             size=(min(self.windows_size), min(self.windows_size))
         )
 
-        self.resume = graphic_interface.Image(
+        self.pause_button = graphic_interface.Button(
             path="IMAGES/bouton_pause.png",
             xy=(self.windows_size[0] * 0.05, 0.05 * self.windows_size[1]),
             size=(min(self.windows_size) * 0.07, min(self.windows_size) * 0.07)
@@ -183,7 +184,7 @@ class Game:
     def display(self):
         self.bg.draw(self.screen)
         self.black_pawn.draw(self.screen)
-        self.resume.draw(self.screen)
+        self.pause_button.draw(self.screen)
         self.white_pawn.draw(self.screen),
 
         self.player1.name_text.draw(
@@ -224,7 +225,12 @@ class Game:
 
     def run(self):
         while self.running:
-            self.handling_events()
-            self.update()
-            self.display()
-            self.clock.tick(60)
+
+            if not self.is_paused:
+                self.handling_events()
+                self.update()
+                self.display()
+                self.clock.tick(60)
+
+            else:
+                pass

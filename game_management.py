@@ -105,8 +105,11 @@ class PawnsPile:
 
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             if 0 < self.nb_pawns < 5:
+
                 if self.rect.collidepoint(event.pos):
                     self.dragging = True
+
+                    # gestion
 
         elif event.type == pygame.MOUSEBUTTONUP and event.button == 1:
             if self.dragging:
