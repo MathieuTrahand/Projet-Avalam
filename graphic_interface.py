@@ -106,6 +106,7 @@ class Button:
 
     def handling_event(self, event):
         self.action = False
+
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             if self.image.rect.collidepoint(event.pos):
                 self.clicked = True

@@ -41,6 +41,7 @@ class PawnsPile:
         self.nb_pawns = nb_pawns
         self.initial_position = position
         self.dragging = False
+        self.can_drop = False
         self.all_piles = all_piles
         self.image = self.load_image()
 
@@ -58,7 +59,7 @@ class PawnsPile:
             # On les met dans un dictionnaire pour éviter d'avoir à les charger 1000 fois
 
             if key not in pawns_images:
-                image_path = f"IMAGES/pion_{self.color}_{self.nb_pawns}.png"  # À adapter
+                image_path = f"IMAGES/pion_{self.color}_{self.nb_pawns}.png"
                 image = pygame.image.load(image_path)
                 pawns_images[key] = pygame.transform.smoothscale(image, (self.size, self.size))
 
@@ -67,12 +68,12 @@ class PawnsPile:
             self.color = None
             return empty_surface  # Aucune image si aucun pion
 
-    def draw(self, screen=None):
-        if not screen:
-            screen = self.screen
+    def draw(self, surface=None):
+        if not surface:
+            surface = self.screen
 
         if self.nb_pawns > 0:
-            screen.blit(self.image, self.rect)
+            surface.blit(self.image, self.rect)
 
     def update(self):
         if self.dragging:
@@ -87,18 +88,16 @@ class PawnsPile:
     def min_distance(self):
         closest_pile = None
         min_distance = float('inf')  # prend le plus grand nombre possible
-
         for ligne in self.all_piles:
             for pile in pygame.sprite.spritecollide(self, ligne, False):
                 if pile != self and self.rect.colliderect(pile.rect):  # Vérifier la collision
 
-                    if pile != self:
-                        distance = pygame.math.Vector2(pile.rect.center) - pygame.math.Vector2(self.rect.center)
-                        distance = distance.length()
+                    distance = pygame.math.Vector2(pile.rect.center) - pygame.math.Vector2(self.rect.center)
+                    distance = distance.length()
 
-                        if distance < min_distance:
-                            min_distance = distance
-                            closest_pile = pile
+                    if distance < min_distance:
+                        min_distance = distance
+                        closest_pile = pile
 
         return closest_pile
 
@@ -113,9 +112,10 @@ class PawnsPile:
             if self.dragging:
                 self.dragging = False
 
-                closest_pile = self.min_distance() # trouver la pile la plus proche
+                closest_pile = self.min_distance()  # trouver la pile la plus proche
 
                 if closest_pile is not None:
+
                     if closest_pile.nb_pawns != 0 and closest_pile.nb_pawns + self.nb_pawns <= 5:
                         # Ajouter à la pile la plus proche avec collision
                         closest_pile.nb_pawns += self.nb_pawns
@@ -126,9 +126,6 @@ class PawnsPile:
 
                         closest_pile.image = closest_pile.load_image()
                         self.image = self.load_image()
-
-                        closest_pile.draw(self.screen)
-                        self.draw(self.screen)
 
                 # revenir à la position initiale
                 self.rect = self.image.get_rect(center=self.initial_position)
