@@ -24,6 +24,12 @@ class InputInterface:
             text='Player 1',
             second_color='white'
         )
+        self.ask = graphic_interface.Input(
+            0.5 * graphic_interface.windows_size[0],
+            0.32 * graphic_interface.windows_size[1],
+            text="Noms d'utilsateur",
+            text_colour='black'
+        )
 
         self.input2 = graphic_interface.Input(
             0.55 * graphic_interface.windows_size[0],
@@ -35,7 +41,7 @@ class InputInterface:
         self.play = graphic_interface.Button(
             "Images/bouton_play.png",
             (0.5 * graphic_interface.windows_size[0], 0.9 * graphic_interface.windows_size[1]),
-            (0.4 * graphic_interface.windows_size[0], 0.15 * graphic_interface.windows_size[1])
+            (0.25 * graphic_interface.windows_size[0], 0.25 * graphic_interface.windows_size[1])
         )
 
     def handling_events(self):
@@ -47,6 +53,7 @@ class InputInterface:
 
             self.input1.handling_events(event)
             self.input2.handling_events(event)
+            self.ask.handling_events(event)
 
             self.play.handling_event(event)
             if self.play.action:
@@ -56,6 +63,7 @@ class InputInterface:
         self.background.draw(self.screen)
         self.input1.draw(self.screen)
         self.input2.draw(self.screen)
+        self.ask.draw(self.screen)
         self.play.draw(self.screen)
         pygame.display.flip()
 
@@ -182,10 +190,12 @@ class Game:
         self.resume.draw(self.screen)
         self.white_pawn.draw(self.screen),
 
+
         self.player1.name_text.draw(
             self.screen,
             position=(self.windows_size[0] * 0.08, self.windows_size[1] * 0.11)
         )
+
 
         self.player1.score_text.draw(
             self.screen,
@@ -201,6 +211,7 @@ class Game:
             self.screen,
             position=(self.windows_size[0] * 0.08, self.windows_size[1] * 0.255),
         )
+
 
         self.timer.draw(self.screen)
 
