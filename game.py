@@ -11,6 +11,12 @@ class InputInterface:
         self.running = True
         self.quit = False
         self.clock = pygame.time.Clock()
+        self.ask = graphic_interface.Input(
+            0.5 * graphic_interface.windows_size[0],
+            0.3 * graphic_interface.windows_size[1],
+            text="Noms d'utilisateur",
+            text_colour='Black'
+        )
 
         self.background = graphic_interface.Image(
             "Images/Interface_Login.png",
@@ -35,7 +41,7 @@ class InputInterface:
         self.play = graphic_interface.Button(
             "Images/bouton_play.png",
             (0.5 * graphic_interface.windows_size[0], 0.9 * graphic_interface.windows_size[1]),
-            (0.4 * graphic_interface.windows_size[0], 0.15 * graphic_interface.windows_size[1])
+            (0.25 * graphic_interface.windows_size[0], 0.25 * graphic_interface.windows_size[1])
         )
 
     def handling_events(self):
@@ -47,6 +53,7 @@ class InputInterface:
 
             self.input1.handling_events(event)
             self.input2.handling_events(event)
+            self.ask.handling_events(event)
 
             self.play.handling_event(event)
             if self.play.action:
@@ -57,6 +64,7 @@ class InputInterface:
         self.input1.draw(self.screen)
         self.input2.draw(self.screen)
         self.play.draw(self.screen)
+        self.ask.draw(self.screen)
         pygame.display.flip()
 
     def run(self):
@@ -91,13 +99,13 @@ class Game:
 
         self.black_pawn = graphic_interface.Image(
             path="IMAGES/boule noir.png",
-            xy=(self.windows_size[0] * 0.05, 0.24 * self.windows_size[1]),
+            xy=(self.windows_size[0] * 0.05, 0.14 * self.windows_size[1]),
             size=(min(self.windows_size) * 0.05, min(self.windows_size) * 0.05)
         )
 
         self.white_pawn = graphic_interface.Image(
             path="IMAGES/boule blanche.png",
-            xy=(self.windows_size[0] * 0.05, 0.14 * self.windows_size[1]),
+            xy=(self.windows_size[0] * 0.05, 0.24 * self.windows_size[1]),
             size=(min(self.windows_size) * 0.05, min(self.windows_size) * 0.05)
         )
 
@@ -163,7 +171,8 @@ class Game:
                 self.running = False
 
             if self.is_paused:
-                pass
+                if self.is_paused:
+                    self.running = False
 
             else:
                 for ligne in self.all_piles:
