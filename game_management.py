@@ -56,8 +56,14 @@ class PawnsPile:
 
     def load_image(self):
         if self.nb_pawns > 0:
-            # Charger l'image en fonction de la couleur et du nombre de pions
-            key = f'{self.color, self.nb_pawns}'
+
+            # On vérifie si on peut déposer des pions dessus, si c'est lecas on utilise le pion entouré en vert
+            if self.can_drop:
+                pass
+            else:
+                # Charger l'image en fonction de la couleur et du nombre de pions
+                key = f'{self.color, self.nb_pawns}'
+
 
             # On les met dans un dictionnaire pour éviter d'avoir à les charger 1000 fois
 
@@ -76,7 +82,19 @@ class PawnsPile:
             surface = self.screen
 
         if self.nb_pawns > 0:
+
             surface.blit(self.image, self.rect)
+
+            if self.can_drop:
+                #pygame.draw.rect(surface, "green", self.rect, width=2)
+
+                pygame.draw.circle(
+                    surface, "green",
+                    self.rect.center,
+                    self.size * 0.5,
+                    width=2
+                )
+
 
     def update(self):
         if self.dragging:

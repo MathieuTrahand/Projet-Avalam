@@ -119,6 +119,8 @@ class Game:
         self.player1 = game_management.Player(name=players[0], all_piles=self.all_piles, color="blanc")
         self.player2 = game_management.Player(name=players[1], all_piles=self.all_piles, color="noir")
 
+        self.display()
+
         self.create_piles()
 
     def create_piles(self):
@@ -227,17 +229,17 @@ class Game:
 
         self.timer.draw(self.screen)
 
-        if self.timer.text != "Time : 00:00":
-            pile_in_drag = None
-            for ligne in self.all_piles:
-                for pile in ligne:
-                    if pile.dragging:
-                        pile_in_drag = pile
-                    else:
-                        pile.draw()
+        pile_in_drag = None
+        for ligne in self.all_piles:
+            for pile in ligne:
 
-            if pile_in_drag:
-                pile_in_drag.draw()
+                if pile.dragging:
+                    pile_in_drag = pile
+                else:
+                    pile.draw()
+
+        if pile_in_drag:
+            pile_in_drag.draw()
 
         pygame.display.flip()
 
