@@ -59,20 +59,26 @@ class PawnsPile:
 
             # On vérifie si on peut déposer des pions dessus, si c'est lecas on utilise le pion entouré en vert
             if self.can_drop:
-                pass
+                key = f'{self.color, self.nb_pawns}_can_drop'
             else:
                 # Charger l'image en fonction de la couleur et du nombre de pions
                 key = f'{self.color, self.nb_pawns}'
 
 
-            # On les met dans un dictionnaire pour éviter d'avoir à les charger 1000 fois
+            # On les met dans un dictionnaire pour éviter d'avoir à les charger 1000 fois et gagner du temps
 
             if key not in pawns_images:
-                image_path = f"IMAGES/pion_{self.color}_{self.nb_pawns}.png"
+                if self.can_drop:
+                    sup_path = f'vert_'
+                else:
+                    sup_path = ''
+
+                image_path = f"IMAGES/pion_{self.color}_{sup_path}{self.nb_pawns}.png"
                 image = pygame.image.load(image_path)
                 pawns_images[key] = pygame.transform.smoothscale(image, (self.size, self.size))
 
             return pawns_images[key]
+
         else:
             self.color = None
             return empty_surface  # Aucune image si aucun pion
@@ -85,6 +91,7 @@ class PawnsPile:
 
             surface.blit(self.image, self.rect)
 
+            """ Créer un cercle autour de la pile si on peut déposer des pions dessus
             if self.can_drop:
                 #pygame.draw.rect(surface, "green", self.rect, width=2)
 
@@ -93,7 +100,7 @@ class PawnsPile:
                     self.rect.center,
                     self.size * 0.5,
                     width=2
-                )
+                )"""
 
 
     def update(self):
@@ -132,32 +139,38 @@ class PawnsPile:
         if j > 0:  # si on est pas tout à gauche de la matrice
             pile = self.all_piles[i][j - 1]
             if 0 < pile.nb_pawns and pile.nb_pawns + self.nb_pawns <= 5:  # on verifie que c'est possible
-                pile.can_drop = can_drop
+                pile.can_drop = can_drop            # on met la variable can_drop à True ou False
+                pile.image = pile.load_image()      # on recharge l'image pour qu'elle soit verte ou non
 
             if i > 0:  # si en plus on est pas tout en haut
                 pile = self.all_piles[i - 1][j - 1]  # on s'occupe de la diagonale haut gauche
                 if 0 < pile.nb_pawns and pile.nb_pawns + self.nb_pawns <= 5:
                     pile.can_drop = can_drop
+                    pile.image = pile.load_image()
 
             if i < 8:  # si en plus on est pas tout en bas
                 pile = self.all_piles[i + 1][j - 1]  # on s'occupe de la diagonale bas gauche
                 if 0 < pile.nb_pawns and pile.nb_pawns + self.nb_pawns <= 5:
                     pile.can_drop = can_drop
+                    pile.image = pile.load_image()
 
         if j < 8:  # si on est pas tout à droite
             pile = self.all_piles[i][j + 1]
             if 0 < pile.nb_pawns and pile.nb_pawns + self.nb_pawns <= 5:
                 pile.can_drop = can_drop
+                pile.image = pile.load_image()
 
             if i > 0:  # si en plus on est pas tout en haut
                 pile = self.all_piles[i - 1][j + 1]  # on s'occupe de la diagonale haut droite
                 if 0 < pile.nb_pawns and pile.nb_pawns + self.nb_pawns <= 5:
                     pile.can_drop = can_drop
+                    pile.image = pile.load_image()
 
             if i < 8:  # si en plus on est pas tout en bas
                 pile = self.all_piles[i + 1][j + 1]  # on s'occupe de la diagonale bas droite
                 if 0 < pile.nb_pawns and pile.nb_pawns + self.nb_pawns <= 5:
                     pile.can_drop = can_drop
+                    pile.image = pile.load_image()
 
         # GESTION HAUT / BAS
 
@@ -165,11 +178,13 @@ class PawnsPile:
             pile = self.all_piles[i - 1][j]
             if 0 < pile.nb_pawns and pile.nb_pawns + self.nb_pawns <= 5:
                 pile.can_drop = can_drop
+                pile.image = pile.load_image()
 
         if i < 8:  # si on est pas tout en bas
             pile = self.all_piles[i + 1][j]
             if 0 < pile.nb_pawns and pile.nb_pawns + self.nb_pawns <= 5:
                 pile.can_drop = can_drop
+                pile.image = pile.load_image()
 
     def handle_event(self, event):
 
