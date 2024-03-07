@@ -23,6 +23,11 @@ class InputInterface:
             (0.5 * graphic_interface.windows_size[0], 0.6 * graphic_interface.windows_size[1]),
             (1.33 * graphic_interface.windows_size[0], 1.33 * graphic_interface.windows_size[1])
         )
+        self.parchemin_button = graphic_interface.Button(
+            'IMAGES/parchemin.png',
+            (0.92 * graphic_interface.windows_size[0], 0.06 * graphic_interface.windows_size[1]),
+            (0.1 * graphic_interface.windows_size[0], 0.1 * graphic_interface.windows_size[1])
+        )
 
         self.input1 = graphic_interface.Input(
             0.55 * graphic_interface.windows_size[0],
@@ -61,6 +66,7 @@ class InputInterface:
 
     def display(self):
         self.background.draw(self.screen)
+        self.parchemin_button.draw(self.screen)
         self.input1.draw(self.screen)
         self.input2.draw(self.screen)
         self.play.draw(self.screen)
