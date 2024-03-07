@@ -90,6 +90,11 @@ class Game:
             xy=(self.windows_size[0] // 2, self.windows_size[1] // 2),
             size=(min(self.windows_size), min(self.windows_size))
         )
+        self.parchemin_button = graphic_interface.Button(
+            path='IMAGES/parchemin.png',
+            xy=(self.windows_size[0]*0.92, self.windows_size[1]*0.06),
+            size=(min(self.windows_size)*0.1, min(self.windows_size)*0.1)
+        )
 
         self.pause_button = graphic_interface.Button(
             path="IMAGES/bouton_pause.png",
@@ -205,6 +210,7 @@ class Game:
         self.bg.draw(self.screen)
         self.black_pawn.draw(self.screen)
         self.pause_button.draw(self.screen)
+        self.parchemin_button.draw(self.screen)
         self.white_pawn.draw(self.screen),
 
         self.player1.name_text.draw(
