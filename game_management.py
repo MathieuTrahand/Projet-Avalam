@@ -69,7 +69,7 @@ class PawnsPile:
 
             if key not in pawns_images:
                 if self.can_drop:
-                    sup_path = f'vert_'
+                    sup_path = f'v5_vert_'
                 else:
                     sup_path = ''
 

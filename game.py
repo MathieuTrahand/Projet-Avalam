@@ -127,8 +127,8 @@ class Game:
 
         self.all_piles = []
 
-        self.player1 = game_management.Player(name=players[0], all_piles=self.all_piles, color="blanc")
-        self.player2 = game_management.Player(name=players[1], all_piles=self.all_piles, color="noir")
+        self.player1 = game_management.Player(name=players[0], all_piles=self.all_piles, color="noir")
+        self.player2 = game_management.Player(name=players[1], all_piles=self.all_piles, color="blanc")
 
         self.display()
 
