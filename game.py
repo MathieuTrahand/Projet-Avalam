@@ -1,9 +1,11 @@
 import pygame
 import graphic_interface
 import game_management
+import bot
+import tests
 
+import tests
 
-#
 
 class InputInterface:
     def __init__(self):
@@ -90,6 +92,8 @@ class Game:
         self.clock = pygame.time.Clock()
         self.windows_size = self.screen.get_size()
         self.is_paused = False
+        self.is_rules = False
+        self.is_over = False
 
         self.bg = graphic_interface.Image(
             path='IMAGES/fond écran.png',
@@ -126,13 +130,19 @@ class Game:
         )
 
         self.all_piles = []
+        self.possible_moves = {}
 
-        self.player1 = game_management.Player(name=players[0], all_piles=self.all_piles, color="noir")
-        self.player2 = game_management.Player(name=players[1], all_piles=self.all_piles, color="blanc")
+        self.player1 = game_management.Player(name=players[0], possible_moves=self.possible_moves, color="noir")
+        self.player2 = game_management.Player(name=players[1], possible_moves=self.possible_moves, color="blanc")
 
-        self.display()
-
+        self.pawn_distance = (self.windows_size[0] * 0.0625, self.windows_size[1] * 0.063)
         self.create_piles()
+
+        self.bot = bot.Bot(self.player2, self.player1, self.possible_moves)
+
+
+
+
 
     def create_piles(self):
         self.display()
@@ -140,9 +150,10 @@ class Game:
         couleur = "blanc"
         x_start = self.windows_size[0] * 0.25
         y_start = self.windows_size[1] * 0.247
-        x_increment = self.windows_size[0] * 0.0625
-        y_increment = self.windows_size[1] * 0.063
-        all_piles_append = self.all_piles.append
+        x_increment, y_increment = self.pawn_distance
+        #all_piles_append = self.all_piles.append
+
+        all_piles = [[None for _ in range(9)] for i in range(9)]
 
         # Liste des coordonnées qui ne peuvent pas avoir de pile
         no_pile = [(0, 0), (0, 1), (0, 2), (0, 3), (0, 4), (0, 7), (0, 8), (1, 0), (1, 1), (1, 2), (1, 3), (1, 8),
@@ -152,7 +163,6 @@ class Game:
         index = 0
 
         for i in range(9):
-            ligne = []
             y_position = y_start + y_increment * i
             for j in range(9):
                 x_position = x_start + x_increment * j
@@ -163,19 +173,58 @@ class Game:
                 else:
                     nb_pawns = 1
 
-                ligne.append(
-                    game_management.PawnsPile(
-                        self.screen, self.all_piles, couleur,
+                pawn_pile = game_management.PawnsPile(
+                        game=self,
+                        color=couleur,
                         initial_position=(x_position, y_position),
                         nb_pawns=nb_pawns,
-                        pawn_distance=(x_increment, y_increment),
-                        matrice_position=(i, j)
+                        matrix_position=(i, j)
                     )
-                )
+
+                all_piles[i][j] = pawn_pile
+
+                self.possible_moves[pawn_pile] = []
+
+                self.add_edges(pawn_pile, all_piles)
+
+                self.display()
 
                 couleur = "noir" if couleur == "blanc" else "blanc"
 
-            all_piles_append(ligne)
+    def add_edges(self, actual_pile, all_piles):
+        i, j = actual_pile.matrix_position
+
+        if j > 0:  # si on est pas tout à gauche de la matrice
+            pile = all_piles[i][j - 1]     # on ajoute celui à gauche
+            if 0 < pile.nb_pawns:               # si il y a des pions dedans
+                self.possible_moves[actual_pile].append(pile)  # on l'ajoute à la liste des piles où on peut déposer des pions
+                self.possible_moves[pile].append(actual_pile)  # et on ajoute la pile actuelle à la liste de l'autre piles
+
+            if i > 0:  # si en plus on est pas tout en haut
+                pile = all_piles[i - 1][j - 1]  # on s'occupe de la diagonale haut gauche
+                if 0 < pile.nb_pawns:
+                    self.possible_moves[actual_pile].append(pile)
+                    self.possible_moves[pile].append(actual_pile)
+
+        if i > 0:  # si on est pas tout en haut
+            pile = all_piles[i - 1][j]         # on ajoute celui au-dessus
+            if 0 < pile.nb_pawns:
+                self.possible_moves[actual_pile].append(pile)
+                self.possible_moves[pile].append(actual_pile)
+
+            if j < 8:  # si en plus on est pas tout à droite
+                pile = all_piles[i - 1][j + 1]  # on s'occupe de la diagonale haut droite
+                if 0 < pile.nb_pawns:
+                    self.possible_moves[actual_pile].append(pile)
+                    self.possible_moves[pile].append(actual_pile)
+
+    def check_game_status(self):
+
+        for key, value in self.possible_moves:
+            if value:
+                return False
+
+        return True
 
     def handling_events(self):
         for event in pygame.event.get():
@@ -184,13 +233,27 @@ class Game:
                 self.running = False
 
             if self.is_paused:
-                if self.is_paused:
-                    self.running = False
+                #self.running = False
+                print(self.possible_moves)
+                self.is_paused = False
+
 
             else:
-                for ligne in self.all_piles:
-                    for pile in ligne:
-                        pile.handle_event(event)
+
+                # gestion des piles :
+                if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+
+                    for pile in self.possible_moves.keys():
+                        if pile.rect.collidepoint(event.pos):
+                            pile.handle_press()
+                            break
+
+                elif event.type == pygame.MOUSEBUTTONUP and event.button == 1:
+                    for pile in self.possible_moves.keys():
+
+                        if pile.dragging:
+                            pile.handle_release()
+                            break
 
                 self.pause_button.handling_event(event)
 
@@ -205,9 +268,8 @@ class Game:
             self.timer.tick()
             self.timer.update_timer = 0  # Réinitialiser le compteur
 
-        for ligne in self.all_piles:
-            for pile in ligne:
-                pile.update()
+        for pile in self.possible_moves.keys():
+            pile.update()
 
         self.player1.update_score()
         self.player2.update_score()
@@ -242,13 +304,12 @@ class Game:
         self.timer.draw(self.screen)
 
         pile_in_drag = None
-        for ligne in self.all_piles:
-            for pile in ligne:
 
-                if pile.dragging:
-                    pile_in_drag = pile
-                else:
-                    pile.draw()
+        for pile in self.possible_moves.keys():
+            if pile.dragging or pile.start_time is not None:  # Si le joueur ou le bot est en train de déplacer une pile
+                pile_in_drag = pile  # On la stocke pour l'afficher en dernier et qu'elle apparaisse au-dessus
+            else:
+                pile.draw()
 
         if pile_in_drag:
             pile_in_drag.draw()
@@ -256,18 +317,29 @@ class Game:
         pygame.display.flip()
 
     def pause_display(self):
-        pass
 
+        # Mini gestion d'évenements pour le menu pause
+        for event in pygame.event.get():
+
+            if event.type == pygame.QUIT:
+                self.running = False
     def run(self):
         while self.running:
 
-            if not self.is_paused:
+            if self.is_over:
+                pass
+
+            elif self.is_paused:
+                self.pause_display()
+
+            elif self.is_rules:
+                pass
+
+            else:
                 self.handling_events()
                 self.update()
                 self.display()
 
-            else:
-                self.handling_events()
-                self.pause_display()
+
 
             self.clock.tick(60)

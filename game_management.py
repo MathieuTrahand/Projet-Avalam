@@ -1,20 +1,22 @@
-from graphic_interface import Text, fonts, Image
+from graphic_interface import Text, fonts
 import pygame
+import time
 
 empty_surface = pygame.Surface((0, 0))
 
 pawns_images = {}
 
+possible_moves = {}
 
 class Player:
-    def __init__(self, name, all_piles, color="blanc"):
+    def __init__(self, name, possible_moves, color="blanc"):
         self.name = name
         self.name_text = Text(
             text=self.name,
             font=fonts['big_font']
         )
         self.color = color
-        self.all_piles = all_piles
+        self.possible_moves = possible_moves
 
         self.score = 0
         self.score_text = Text(
@@ -25,34 +27,36 @@ class Player:
 
     def update_score(self):
         self.score = 0
-        for ligne in self.all_piles:
-            for pile in ligne:
-                if pile.nb_pawns > 0 and pile.color == self.color:
-                    self.score += 1
+        for pile in self.possible_moves.keys():
+            if pile.nb_pawns > 0 and pile.color == self.color:
+                self.score += 1
 
         self.score_text.update(text=f"score : {str(self.score)}")
 
 
 class PawnsPile:
-    def __init__(self, screen, all_piles, color="blanc", initial_position=(0, 0), nb_pawns=1,
-                 pawn_distance=(0, 0), matrice_position=(0, 0)):
+    def __init__(self, game, color="blanc", initial_position=(0, 0), nb_pawns=1, matrix_position=(0, 0)):
 
-        self.screen = screen
-        self.size = min(self.screen.get_size()) / 20
+        self.game = game
+        self.matrix_position = matrix_position
+        self.size = min(self.game.screen.get_size()) / 20
         self.color = color
         self.nb_pawns = nb_pawns
         self.initial_position = initial_position
-        self.matrice_position = matrice_position
         self.dragging = False
         self.can_drop = False
-        self.all_piles = all_piles
+        self.possible_moves = self.game.possible_moves
         self.image = self.load_image()
 
         self.rect = self.image.get_rect(center=self.initial_position)
 
         self.offset = [self.initial_position[0] - self.rect.x, self.initial_position[1] - self.rect.y]
 
-        self.pawn_distance = pawn_distance
+        self.pawn_distance = game.pawn_distance
+
+        # relatif au bot :
+        self.drag_bot_time = 0.3
+        self.start_time = None
 
     def load_image(self):
         if self.nb_pawns > 0:
@@ -85,7 +89,7 @@ class PawnsPile:
 
     def draw(self, surface=None):
         if not surface:
-            surface = self.screen
+            surface = self.game.screen
 
         if self.nb_pawns > 0:
 
@@ -102,6 +106,9 @@ class PawnsPile:
                     width=2
                 )"""
 
+    def bot_drag_and_drop(self, target_pile):
+        self.target_pile = target_pile
+        self.start_time = time.time()
 
     def update(self):
         if self.dragging:
@@ -114,110 +121,95 @@ class PawnsPile:
             if abs(self.initial_position[1] - mouse_y) <= self.pawn_distance[1] + 0.6 * self.size:
                 self.rect.y = mouse_y - self.offset[1]
 
+        if self.start_time is not None:
+
+            current_time = time.time()
+            elapsed_time = current_time - self.start_time
+
+            if elapsed_time >= self.drag_bot_time:
+                self.drop_gestion(self.target_pile)                                 # déposer la pile
+                self.rect = self.image.get_rect(center=self.initial_position)       # revenir à la position initiale
+                self.start_time = None                                              # remettre le start à None
+
+            else:
+                progress = elapsed_time / self.drag_bot_time
+
+                new_x = int(self.initial_position[0] + (self.target_pile.initial_position[0] - self.initial_position[0]) * progress)
+                new_y = int(self.initial_position[1] + (self.target_pile.initial_position[1] - self.initial_position[1]) * progress)
+
+                self.rect.x = new_x - self.offset[0]
+                self.rect.y = new_y - self.offset[1]
+
     def min_distance(self):
         closest_pile = None
         min_distance = float('inf')  # prend le plus grand nombre possible
-        for ligne in self.all_piles:
-            for pile in pygame.sprite.spritecollide(self, ligne, False):
-                if pile != self and self.rect.colliderect(pile.rect):  # Vérifier la collision
+        for pile in pygame.sprite.spritecollide(self, self.possible_moves.keys(), False):
+            if pile != self and self.rect.colliderect(pile.rect):  # Vérifier la collision
 
-                    distance = pygame.math.Vector2(pile.rect.center) - pygame.math.Vector2(self.rect.center)
-                    distance = distance.length()
+                distance = pygame.math.Vector2(pile.rect.center) - pygame.math.Vector2(self.rect.center)
+                distance = distance.length()
 
-                    if distance < min_distance:
-                        min_distance = distance
-                        closest_pile = pile
+                if distance < min_distance:
+                    min_distance = distance
+                    closest_pile = pile
 
         return closest_pile
 
-    def can_drop_gestion(self, can_drop: bool = True):
+    def can_be_drop_gestion(self, can_drop: bool = True):
 
-        i, j = self.matrice_position  # i ligne j colonne
+        for pile in self.possible_moves[self]:
+            pile.can_drop = can_drop
+            pile.image = pile.load_image()
 
-        # GESTION GAUCHE / DROITE & DIAGONALES
+    def update_possible_moves(self, pile_to_drop):
 
-        if j > 0:  # si on est pas tout à gauche de la matrice
-            pile = self.all_piles[i][j - 1]
-            if 0 < pile.nb_pawns and pile.nb_pawns + self.nb_pawns <= 5:  # on verifie que c'est possible
-                pile.can_drop = can_drop            # on met la variable can_drop à True ou False
-                pile.image = pile.load_image()      # on recharge l'image pour qu'elle soit verte ou non
+        del self.possible_moves[self]  # on enlève la pile de départ dans les clés
+        self.possible_moves[pile_to_drop].remove(self)  # on enlève la pile de départ dans les valeurs
 
-            if i > 0:  # si en plus on est pas tout en haut
-                pile = self.all_piles[i - 1][j - 1]  # on s'occupe de la diagonale haut gauche
-                if 0 < pile.nb_pawns and pile.nb_pawns + self.nb_pawns <= 5:
-                    pile.can_drop = can_drop
-                    pile.image = pile.load_image()
+        for pile in self.possible_moves[pile_to_drop]:
 
-            if i < 8:  # si en plus on est pas tout en bas
-                pile = self.all_piles[i + 1][j - 1]  # on s'occupe de la diagonale bas gauche
-                if 0 < pile.nb_pawns and pile.nb_pawns + self.nb_pawns <= 5:
-                    pile.can_drop = can_drop
-                    pile.image = pile.load_image()
+            pile.can_drop = False
+            pile.image = pile.load_image()
 
-        if j < 8:  # si on est pas tout à droite
-            pile = self.all_piles[i][j + 1]
-            if 0 < pile.nb_pawns and pile.nb_pawns + self.nb_pawns <= 5:
-                pile.can_drop = can_drop
-                pile.image = pile.load_image()
+            if pile.nb_pawns + pile_to_drop.nb_pawns > 5:
+                self.possible_moves[pile_to_drop].remove(pile)
+                self.possible_moves[pile].remove(pile_to_drop)
 
-            if i > 0:  # si en plus on est pas tout en haut
-                pile = self.all_piles[i - 1][j + 1]  # on s'occupe de la diagonale haut droite
-                if 0 < pile.nb_pawns and pile.nb_pawns + self.nb_pawns <= 5:
-                    pile.can_drop = can_drop
-                    pile.image = pile.load_image()
+    def drop_gestion(self, pile_to_drop):
+        # Ajouter à la pile la plus proche avec collision
+        pile_to_drop.nb_pawns += self.nb_pawns
+        self.nb_pawns = 0
 
-            if i < 8:  # si en plus on est pas tout en bas
-                pile = self.all_piles[i + 1][j + 1]  # on s'occupe de la diagonale bas droite
-                if 0 < pile.nb_pawns and pile.nb_pawns + self.nb_pawns <= 5:
-                    pile.can_drop = can_drop
-                    pile.image = pile.load_image()
+        pile_to_drop.color = self.color
+        self.color = None
 
-        # GESTION HAUT / BAS
+        pile_to_drop.image = pile_to_drop.load_image()
+        self.image = self.load_image()
 
-        if i > 0:  # si on est pas tout en haut
-            pile = self.all_piles[i - 1][j]
-            if 0 < pile.nb_pawns and pile.nb_pawns + self.nb_pawns <= 5:
-                pile.can_drop = can_drop
-                pile.image = pile.load_image()
+    def handle_press(self):
 
-        if i < 8:  # si on est pas tout en bas
-            pile = self.all_piles[i + 1][j]
-            if 0 < pile.nb_pawns and pile.nb_pawns + self.nb_pawns <= 5:
-                pile.can_drop = can_drop
-                pile.image = pile.load_image()
+        if 0 < self.nb_pawns < 5:
 
-    def handle_event(self, event):
+            self.dragging = True
 
-        if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-            if 0 < self.nb_pawns < 5:
+            # gestion des piles où on peut déposer la notre
+            self.can_be_drop_gestion(True)
 
-                if self.rect.collidepoint(event.pos):
-                    self.dragging = True
+    def handle_release(self):
 
-                    # gestion des piles où on peut déposer la notre
-                    self.can_drop_gestion(True)
+        self.dragging = False
 
-        elif event.type == pygame.MOUSEBUTTONUP and event.button == 1:
-            if self.dragging:
-                self.dragging = False
+        self.can_be_drop_gestion(False)
 
-                closest_pile = self.min_distance()  # trouver la pile la plus proche
+        closest_pile = self.min_distance()  # trouver la pile la plus proche
 
-                if closest_pile is not None:
+        if closest_pile is not None:
 
-                    if closest_pile.can_drop:
-                        # Ajouter à la pile la plus proche avec collision
-                        closest_pile.nb_pawns += self.nb_pawns
-                        self.nb_pawns = 0
+            if closest_pile in self.possible_moves[self]:
+                self.drop_gestion(closest_pile)
 
-                        closest_pile.color = self.color
-                        self.color = None
+                # mettre à jour le dictionnaire des coups possibles
+                self.update_possible_moves(closest_pile)
 
-                        closest_pile.image = closest_pile.load_image()
-                        self.image = self.load_image()
-
-                # on remet tout à False
-                self.can_drop_gestion(False)
-
-                # revenir à la position initiale
-                self.rect = self.image.get_rect(center=self.initial_position)
+        # revenir à la position initiale
+        self.rect = self.image.get_rect(center=self.initial_position)
