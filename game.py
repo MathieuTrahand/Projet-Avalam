@@ -115,10 +115,10 @@ class Game:
             size=(min(self.windows_size) * 0.1, min(self.windows_size) * 0.1)
         )
 
-        self.pagepause_button = graphic_interface.Button(
+        self.pagepause_image = graphic_interface.Image(
             path='IMAGES/menu_pause.png',
-            xy=(self.windows_size[0]*0.92, self.windows_size[1]*0.06),
-            size=(min(self.windows_size)*0.1, min(self.windows_size)*0.1)
+            xy=(self.windows_size[0]//2, self.windows_size[1]//26),
+            size=(self.windows_size[0], self.windows_size[1])
         )
 
         self.quitter_button = graphic_interface.Button(
@@ -272,11 +272,6 @@ class Game:
             if event.type == pygame.QUIT:
                 self.running = False
 
-            if self.is_paused:
-                #self.running = False
-                #print(self.possible_moves)
-                self.is_paused = False
-
 
             else:
 
@@ -289,6 +284,7 @@ class Game:
                             break
 
                 elif event.type == pygame.MOUSEBUTTONUP and event.button == 1:
+                    self.is_rules=True
                     for pile in self.possible_moves.keys():
 
                         if pile.dragging:
@@ -297,8 +293,8 @@ class Game:
 
                 self.pause_button.handling_event(event)
 
-                if self.pause_button.action:
-                    self.is_paused = True
+        if self.pause_button.action:
+            self.is_paused = True
 
     def update(self):
 
@@ -379,8 +375,23 @@ class Game:
         # Mini gestion d'évenements pour le menu pause
         for event in pygame.event.get():
 
+
+
+
+
+
             if event.type == pygame.QUIT:
                 self.running = False
+
+        self.pagepause_image.draw(self.screen)
+
+
+    def rules(self):
+        """if self.is_rules==True
+            if self.parchemin_button.action:
+
+        """
+
     def run(self):
         while self.running:
 
