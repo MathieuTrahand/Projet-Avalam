@@ -103,6 +103,47 @@ class Game:
             size=(min(self.windows_size)*0.1, min(self.windows_size)*0.1)
         )
 
+        self.rightfleche_button = graphic_interface.Button(
+            path='IMAGES/fleche_droite.png',
+            xy=(self.windows_size[0]*0.92, self.windows_size[1]*0.06),
+            size=(min(self.windows_size)*0.1, min(self.windows_size)*0.1)
+        )
+
+        self.leftfleche_button = graphic_interface.Button(
+            path='IMAGES/fleche_gauche.png',
+            xy=(self.windows_size[0] * 0.92, self.windows_size[1] * 0.06),
+            size=(min(self.windows_size) * 0.1, min(self.windows_size) * 0.1)
+        )
+
+        self.pagepause_button = graphic_interface.Button(
+            path='IMAGES/menu_pause.png',
+            xy=(self.windows_size[0]*0.92, self.windows_size[1]*0.06),
+            size=(min(self.windows_size)*0.1, min(self.windows_size)*0.1)
+        )
+
+        self.quitter_button = graphic_interface.Button(
+            path='IMAGES/quitter_.png',
+            xy=(self.windows_size[0]*0.92, self.windows_size[1]*0.06),
+            size=(min(self.windows_size)*0.1, min(self.windows_size)*0.1)
+        )
+
+        self.reprendre=_button = graphic_interface.Button(
+            path='IMAGES/reprendre_.png',
+            xy=(self.windows_size[0] * 0.92, self.windows_size[1] * 0.06),
+            size=(min(self.windows_size) * 0.1, min(self.windows_size) * 0.1)
+        )
+
+        self.croix_button = graphic_interface.Button(
+            path='IMAGES/croix.png',
+            xy=(self.windows_size[0]*0.92, self.windows_size[1]*0.06),
+            size=(min(self.windows_size)*0.1, min(self.windows_size)*0.1)
+        )
+
+
+
+
+
+
         self.pause_button = graphic_interface.Button(
             path="IMAGES/bouton_pause.png",
             xy=(self.windows_size[0] * 0.05, 0.05 * self.windows_size[1]),
