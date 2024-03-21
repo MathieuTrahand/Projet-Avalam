@@ -16,7 +16,11 @@ fonts = {
 
 class Image:
     def __init__(self, path: str, xy: tuple = (0, 0), size: tuple = (0, 0)):
-        self.image = pygame.image.load(path)
+
+        self.path = path
+        self.image = pygame.image.load(self.path)
+
+        self.xy = xy
 
         # Si la taille n'est pas spécifiée, utilisez la taille de l'image chargée
         if size == (0, 0):
@@ -27,6 +31,12 @@ class Image:
         # Redimensionner l'image avec interpolation bilinéaire pour un rendu plus lisse
         self.image = pygame.transform.smoothscale(self.image, self.size)
         self.rect = self.image.get_rect(center=xy)
+
+    def update(self):
+        self.image = pygame.image.load(self.path)
+        # Redimensionner l'image avec interpolation bilinéaire pour un rendu plus lisse
+        self.image = pygame.transform.smoothscale(self.image, self.size)
+        self.rect = self.image.get_rect(center=self.xy)
 
     def draw(self, screen):
         screen.blit(self.image, self.rect)

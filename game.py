@@ -2,9 +2,6 @@ import pygame
 import graphic_interface
 import game_management
 import bot
-import tests
-
-import tests
 
 
 class InputInterface:
@@ -129,19 +126,19 @@ class Game:
             anchor='center'
         )
 
-        self.all_piles = []
+        self.all_piles = {}
         self.possible_moves = {}
 
         self.player1 = game_management.Player(name=players[0], possible_moves=self.possible_moves, color="noir")
         self.player2 = game_management.Player(name=players[1], possible_moves=self.possible_moves, color="blanc")
 
+        self.is_player1_turn = True
+
         self.pawn_distance = (self.windows_size[0] * 0.0625, self.windows_size[1] * 0.063)
         self.create_piles()
 
-        self.bot = bot.Bot(self.player2, self.player1, self.possible_moves)
-
-
-
+        self.bot = ancien_bot.Bot(self)
+        #self.bot2 = bot.Bot(self, color="noir")
 
 
     def create_piles(self):
@@ -181,13 +178,15 @@ class Game:
                         matrix_position=(i, j)
                     )
 
-                all_piles[i][j] = pawn_pile
+                if nb_pawns :
 
-                self.possible_moves[pawn_pile] = []
+                    all_piles[i][j] = pawn_pile
 
-                self.add_edges(pawn_pile, all_piles)
+                    self.possible_moves[pawn_pile] = []
 
-                self.display()
+                    self.add_edges(pawn_pile, all_piles)
+
+                    self.display()
 
                 couleur = "noir" if couleur == "blanc" else "blanc"
 
@@ -196,32 +195,32 @@ class Game:
 
         if j > 0:  # si on est pas tout à gauche de la matrice
             pile = all_piles[i][j - 1]     # on ajoute celui à gauche
-            if 0 < pile.nb_pawns:               # si il y a des pions dedans
+            if pile:               # si il y a des pions dedans
                 self.possible_moves[actual_pile].append(pile)  # on l'ajoute à la liste des piles où on peut déposer des pions
                 self.possible_moves[pile].append(actual_pile)  # et on ajoute la pile actuelle à la liste de l'autre piles
 
             if i > 0:  # si en plus on est pas tout en haut
                 pile = all_piles[i - 1][j - 1]  # on s'occupe de la diagonale haut gauche
-                if 0 < pile.nb_pawns:
+                if pile:
                     self.possible_moves[actual_pile].append(pile)
                     self.possible_moves[pile].append(actual_pile)
 
         if i > 0:  # si on est pas tout en haut
             pile = all_piles[i - 1][j]         # on ajoute celui au-dessus
-            if 0 < pile.nb_pawns:
+            if pile:
                 self.possible_moves[actual_pile].append(pile)
                 self.possible_moves[pile].append(actual_pile)
 
             if j < 8:  # si en plus on est pas tout à droite
                 pile = all_piles[i - 1][j + 1]  # on s'occupe de la diagonale haut droite
-                if 0 < pile.nb_pawns:
+                if pile:
                     self.possible_moves[actual_pile].append(pile)
                     self.possible_moves[pile].append(actual_pile)
 
-    def check_game_status(self):
+    def is_game_over(self):
 
-        for key, value in self.possible_moves:
-            if value:
+        for pile in self.possible_moves.keys():
+            if self.possible_moves[pile]:
                 return False
 
         return True
@@ -234,7 +233,7 @@ class Game:
 
             if self.is_paused:
                 #self.running = False
-                print(self.possible_moves)
+                #print(self.possible_moves)
                 self.is_paused = False
 
 
@@ -273,6 +272,24 @@ class Game:
 
         self.player1.update_score()
         self.player2.update_score()
+
+        add_path = " vert"
+
+        if self.is_player1_turn and self.black_pawn.path != "IMAGES/boule noir" + add_path + ".png":
+
+            self.black_pawn.path = "IMAGES/boule noir" + add_path + ".png"
+            self.black_pawn.update()
+
+            self.white_pawn.path = "IMAGES/boule blanche.png"
+            self.white_pawn.update()
+
+        elif not self.is_player1_turn and self.white_pawn.path != "IMAGES/boule blanche" + add_path + ".png":
+
+            self.white_pawn.path = "IMAGES/boule blanche" + add_path + ".png"
+            self.white_pawn.update()
+
+            self.black_pawn.path = "IMAGES/boule noir.png"
+            self.black_pawn.update()
 
     def display(self):
         self.bg.draw(self.screen)
@@ -339,6 +356,12 @@ class Game:
                 self.handling_events()
                 self.update()
                 self.display()
+
+                if not self.is_player1_turn:
+
+                    self.bot.play(deph=2)
+
+                    self.is_player1_turn = True
 
 
 

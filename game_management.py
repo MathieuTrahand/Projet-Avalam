@@ -58,6 +58,25 @@ class PawnsPile:
         self.drag_bot_time = 0.3
         self.start_time = None
 
+    ## Pour le tri : ##
+    """def __lt__(self, other):
+        # < par rapport à la position dans la matrice
+        if self.matrix_position[0] == other.matrix_position[0]:
+            return self.matrix_position[1] < other.matrix_position[1]
+        else:
+            return self.matrix_position[0] < other.matrix_position[0]
+
+    def __eq__(self, other):
+        # Egaux par rapport à la position dans la matrice
+        return (self.matrix_position[0], self.matrix_position[1]) == (other.matrix_position[0], other.matrix_position[1])
+
+    def __gt__(self, other):
+        # > par rapport à la position dans la matrice
+        if self.matrix_position[0] == other.matrix_position[0]:
+            return self.matrix_position[1] > other.matrix_position[1]
+        else:
+            return self.matrix_position[0] > other.matrix_position[0]"""
+
     def load_image(self):
         if self.nb_pawns > 0:
 
@@ -95,16 +114,6 @@ class PawnsPile:
 
             surface.blit(self.image, self.rect)
 
-            """ Créer un cercle autour de la pile si on peut déposer des pions dessus
-            if self.can_drop:
-                #pygame.draw.rect(surface, "green", self.rect, width=2)
-
-                pygame.draw.circle(
-                    surface, "green",
-                    self.rect.center,
-                    self.size * 0.5,
-                    width=2
-                )"""
 
     def bot_drag_and_drop(self, target_pile):
         self.target_pile = target_pile
@@ -121,15 +130,19 @@ class PawnsPile:
             if abs(self.initial_position[1] - mouse_y) <= self.pawn_distance[1] + 0.6 * self.size:
                 self.rect.y = mouse_y - self.offset[1]
 
-        if self.start_time is not None:
+        elif self.start_time is not None:
 
             current_time = time.time()
             elapsed_time = current_time - self.start_time
 
             if elapsed_time >= self.drag_bot_time:
-                self.drop_gestion(self.target_pile)                                 # déposer la pile
-                self.rect = self.image.get_rect(center=self.initial_position)       # revenir à la position initiale
-                self.start_time = None                                              # remettre le start à None
+                self.start_time = None
+
+                self.drop_gestion(self.target_pile)
+
+                # mettre à jour le dictionnaire des coups possibles
+                self.update_possible_moves(self.target_pile)
+
 
             else:
                 progress = elapsed_time / self.drag_bot_time
@@ -163,8 +176,9 @@ class PawnsPile:
 
     def update_possible_moves(self, pile_to_drop):
 
-        del self.possible_moves[self]  # on enlève la pile de départ dans les clés
-        self.possible_moves[pile_to_drop].remove(self)  # on enlève la pile de départ dans les valeurs
+        for pile in self.possible_moves[self]:
+            self.possible_moves[pile].remove(self)  # on enlève la pile de départ dans les valeurs
+        self.possible_moves[self] = [] # on enlève la pile de départ dans les clés
 
         for pile in self.possible_moves[pile_to_drop]:
 
@@ -210,6 +224,9 @@ class PawnsPile:
 
                 # mettre à jour le dictionnaire des coups possibles
                 self.update_possible_moves(closest_pile)
+
+                # tour du prochain joueur
+                self.game.is_player1_turn = not self.game.is_player1_turn
 
         # revenir à la position initiale
         self.rect = self.image.get_rect(center=self.initial_position)
