@@ -1,7 +1,7 @@
 import pygame
 import graphic_interface
 import game_management
-import ancien_bot
+import bot
 
 
 class InputInterface:
@@ -201,7 +201,7 @@ class Game:
         self.pawn_distance = (self.windows_size[0] * 0.0625, self.windows_size[1] * 0.063)
         self.create_piles()
 
-        self.bot = ancien_bot.Bot(self)
+        self.bot = bot.Bot(self)
         #self.bot2 = bot.Bot(self, color="noir")
 
 
