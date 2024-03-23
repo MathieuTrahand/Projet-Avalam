@@ -1,7 +1,7 @@
 import pygame
 import graphic_interface
 import game_management
-import bot
+import ancien_bot
 
 
 class InputInterface:
@@ -60,8 +60,9 @@ class InputInterface:
             self.ask.handling_events(event)
 
             self.play.handling_event(event)
-            if self.play.action:
-                self.running = False
+
+        if self.play.action:
+            self.running = False
 
     def display(self):
         self.background.draw(self.screen)
@@ -200,7 +201,7 @@ class Game:
         self.pawn_distance = (self.windows_size[0] * 0.0625, self.windows_size[1] * 0.063)
         self.create_piles()
 
-        self.bot = bot.Bot(self)
+        self.bot = ancien_bot.Bot(self)
         #self.bot2 = bot.Bot(self, color="noir")
 
 
@@ -316,10 +317,10 @@ class Game:
                 self.pause_button.handling_event(event)
                 self.parchemin_button.handling_event(event)
 
-        if self.pause_button.action:
-            self.is_paused = True
-        if self.parchemin_button.action:
-            self.is_rules = True
+                if self.pause_button.action:
+                    self.is_paused = True
+                if self.parchemin_button.action:
+                    self.is_rules = True
 
 
     def update(self):
@@ -447,7 +448,7 @@ class Game:
 
                 if not self.is_player1_turn:
 
-                    self.bot.play(deph=2)
+                    self.bot.play(deph=3)
 
                     self.is_player1_turn = True
 
