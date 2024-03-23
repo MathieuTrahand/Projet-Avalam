@@ -138,13 +138,10 @@ class PawnsPile:
             if elapsed_time >= self.drag_bot_time:
                 self.start_time = None
 
-                self.drop_gestion(self.target_pile)
+                self.drop(self.target_pile)
 
                 # revenir à la position initiale
                 self.rect = self.image.get_rect(center=self.initial_position)
-
-                # mettre à jour le dictionnaire des coups possibles
-                self.update_possible_moves(self.target_pile)
 
                 self.target_pile = None
 
@@ -205,6 +202,18 @@ class PawnsPile:
         pile_to_drop.image = pile_to_drop.load_image()
         self.image = self.load_image()
 
+    def drop(self, pile_to_drop):
+        self.drop_gestion(pile_to_drop)
+
+        # mettre à jour le dictionnaire des coups possibles
+        self.update_possible_moves(pile_to_drop)
+
+        # verifier la fin de partie
+        self.game.game_over = self.game.is_game_over()
+
+
+
+
     def handle_press(self):
 
         if 0 < self.nb_pawns < 5:
@@ -225,10 +234,7 @@ class PawnsPile:
         if closest_pile is not None:
 
             if closest_pile in self.possible_moves[self]:
-                self.drop_gestion(closest_pile)
-
-                # mettre à jour le dictionnaire des coups possibles
-                self.update_possible_moves(closest_pile)
+                self.drop(pile_to_drop=closest_pile)
 
                 # tour du prochain joueur
                 self.game.is_player1_turn = not self.game.is_player1_turn

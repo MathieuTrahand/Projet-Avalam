@@ -1,3 +1,4 @@
+from copy import deepcopy
 from math import inf
 
 
@@ -67,7 +68,6 @@ class Bot:
 
         # On remet à jour le dictionnaire des coups possibles de la case d'arrivée
         for pile in end_pile_possible_moves:
-            #if pile not in self.possible_moves[end_pile]:  # Si il n'y a plus de lien entre les 2 piles
             self.possible_moves[pile].append(end_pile)
             self.possible_moves[end_pile].append(pile)  # on rajoute le lien entre les 2 piles
 
@@ -97,6 +97,28 @@ class Bot:
         self.bot_score += add_bot
         self.ennemy_score += add_ennemy
 
+    def move_weight(self, end_pile):
+        weight = 0
+
+        if end_pile.nb_pawns == 5:
+            weight += 5
+
+        elif self.possible_moves[end_pile] == []:
+            weight += 3
+
+        else:
+            for pile in self.possible_moves[end_pile]:
+                if pile.color == end_pile.color:
+                    if pile.nb_pawns + end_pile.nb_pawns == 5:
+                        weight += 2
+
+                else:
+                    if pile.nb_pawns + end_pile.nb_pawns == 5:
+                        weight -= 5
+
+        return weight
+
+
     def minimax(self, deph, maximizing_player, alpha, beta):
 
         if deph == 0 or self.game.is_game_over():
@@ -110,10 +132,10 @@ class Bot:
                 for end_pile in self.possible_moves[start_pile]:
 
                     # récupérer les données pour revenir en arrière
-                    start_pile_color = start_pile.color
-                    end_pile_color = end_pile.color
-                    start_pile_nb_pawns = start_pile.nb_pawns
-                    end_pile_nb_pawns = end_pile.nb_pawns
+                    start_pile_color = deepcopy(start_pile.color)
+                    end_pile_color = deepcopy(end_pile.color)
+                    start_pile_nb_pawns = deepcopy(start_pile.nb_pawns)
+                    end_pile_nb_pawns = deepcopy(end_pile.nb_pawns)
 
                     # gérer le coup
                     start_pile_possible_moves, end_pile_possible_moves = self.move_gestion(start_pile, end_pile)
@@ -131,6 +153,9 @@ class Bot:
 
                     # annuler le score
                     self.score_gestion(start_pile_color, end_pile_color, cancel=True)
+
+                    # Pondérer le coup
+                    eval += self.move_weight(end_pile)
 
                     # mettre à jour le meilleur coup
                     if eval > maxEval:
@@ -150,11 +175,16 @@ class Bot:
             for start_pile in self.possible_moves.keys():
                 for end_pile in self.possible_moves[start_pile]:
 
+                    if start_pile.nb_pawns + end_pile.nb_pawns > 5:
+                        self.possible_moves[start_pile].remove(end_pile)
+                        self.possible_moves[end_pile].remove(start_pile)
+                        break
+
                     # récupérer les données pour revenir en arrière
-                    start_pile_color = start_pile.color
-                    end_pile_color = end_pile.color
-                    start_pile_nb_pawns = start_pile.nb_pawns
-                    end_pile_nb_pawns = end_pile.nb_pawns
+                    start_pile_color = deepcopy(start_pile.color)
+                    end_pile_color = deepcopy(end_pile.color)
+                    start_pile_nb_pawns = deepcopy(start_pile.nb_pawns)
+                    end_pile_nb_pawns = deepcopy(end_pile.nb_pawns)
 
                     # gérer le coup
                     start_pile_possible_moves, end_pile_possible_moves = self.move_gestion(start_pile, end_pile)
@@ -173,6 +203,9 @@ class Bot:
                     # annuler le score
                     self.score_gestion(start_pile_color, end_pile_color, True)
 
+                    # Pondérer le coup
+                    eval += self.move_weight(end_pile)
+
                     if eval < minEval:
                         minEval = eval
                         best_move = (start_pile, end_pile)
@@ -186,8 +219,6 @@ class Bot:
     def play(self, deph=2):
         self.bot_score = self.bot_player.score
         self.ennemy_score = self.ennemy_player.score
-
-        possible_moves = self.possible_moves
 
         best_move = self.minimax(deph, True, -inf, inf)[1]
         self.move_pile(best_move)

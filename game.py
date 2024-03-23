@@ -4,6 +4,21 @@ import game_management
 import bot
 
 
+class Game:
+    def run(self):
+        inputInterface = InputInterface()
+
+        inputInterface.run()
+
+        if not inputInterface.quit:
+            myGame = Board(inputInterface.get_players())
+            myGame.run()
+
+            if not myGame.quit:
+                self.run()
+
+
+
 class InputInterface:
     def __init__(self):
         self.screen = pygame.display.set_mode(graphic_interface.windows_size)
@@ -83,10 +98,11 @@ class InputInterface:
         return self.input1.text.text, self.input2.text.text
 
 
-class Game:
+class Board:
     def __init__(self, players: (str, str) = ("Player 1", "Player 2")):
         self.screen = pygame.display.set_mode(graphic_interface.windows_size)
         self.running = True
+        self.quit = False
         self.clock = pygame.time.Clock()
         self.windows_size = self.screen.get_size()
         self.is_paused = False
@@ -207,6 +223,7 @@ class Game:
         self.create_piles()
 
         self.bot = bot.Bot(self)
+
         self.game_over : bool = False
 
     def create_piles(self):
@@ -298,6 +315,7 @@ class Game:
 
             if event.type == pygame.QUIT:
                 self.running = False
+                self.quit = True
 
 
             else:
@@ -411,6 +429,7 @@ class Game:
 
             if event.type == pygame.QUIT:
                 self.running = False
+                self.quit = True
 
             self.go_back_button.handling_event(event)
             self.quit_button.handling_event(event)
@@ -420,6 +439,7 @@ class Game:
 
             if self.quit_button.action:
                 self.running = False
+
 
 
     def rules(self):
@@ -455,6 +475,7 @@ class Game:
 
             if event.type == pygame.QUIT:
                 self.running = False
+                self.quit = True
             self.rightfleche_button.handling_event(event)
             self.leftfleche_button.handling_event(event)
 
@@ -511,6 +532,9 @@ class Game:
                 self.rules()
                 self.is_rules_1 = True
 
+            elif self.game_over:
+                pass
+
             else:
                 self.handling_events()
                 self.update()
@@ -518,8 +542,9 @@ class Game:
 
                 if not self.is_player1_turn:
 
-                    self.bot.play(deph=3)
+                    self.bot.play(deph=2)
 
+                    # tour du prochain joueur
                     self.is_player1_turn = True
 
 
