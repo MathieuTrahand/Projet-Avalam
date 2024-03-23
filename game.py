@@ -184,6 +184,13 @@ class Game:
             position=(self.windows_size[0] * 0.165, self.windows_size[1] * 0.05),
             anchor='center'
         )
+        #
+
+        self.is_rules_1 = False
+        self.is_rules_2 = False
+        self.is_rules_3 = False
+        self.is_rules_4 = False
+
 
         self.possible_moves : dict = {}
 
