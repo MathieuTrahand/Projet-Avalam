@@ -207,8 +207,7 @@ class Game:
         self.create_piles()
 
         self.bot = bot.Bot(self)
-        #self.bot2 = bot.Bot(self, color="noir")
-
+        self.game_over : bool = False
 
     def create_piles(self):
         self.display()
