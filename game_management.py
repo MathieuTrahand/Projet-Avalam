@@ -140,8 +140,13 @@ class PawnsPile:
 
                 self.drop_gestion(self.target_pile)
 
+                # revenir à la position initiale
+                self.rect = self.image.get_rect(center=self.initial_position)
+
                 # mettre à jour le dictionnaire des coups possibles
                 self.update_possible_moves(self.target_pile)
+
+                self.target_pile = None
 
 
             else:
