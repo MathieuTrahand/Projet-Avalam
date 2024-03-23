@@ -96,7 +96,7 @@ class PawnsPile:
                 else:
                     sup_path = ''
 
-                image_path = f"IMAGES/pion_{self.color}_{sup_path}{self.nb_pawns}.png"
+                image_path = f"../IMAGES/pion_{self.color}_{sup_path}{self.nb_pawns}.png"
                 image = pygame.image.load(image_path)
                 pawns_images[key] = pygame.transform.smoothscale(image, (self.size, self.size))
 

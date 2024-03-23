@@ -1,5 +1,5 @@
 import pygame
-from Python import game_management, graphic_interface, bot
+import game_management, graphic_interface, bot
 
 
 class Game:
@@ -367,15 +367,15 @@ class Board:
 
         if self.is_player1_turn and self.black_pawn.path != "IMAGES/boule noir" + add_path + ".png":
 
-            self.black_pawn.path = "IMAGES/boule noir" + add_path + ".png"
+            self.black_pawn.path = "../IMAGES/boule noir" + add_path + ".png"
             self.black_pawn.update()
 
             self.white_pawn.path = "../IMAGES/boule blanche.png"
             self.white_pawn.update()
 
-        elif not self.is_player1_turn and self.white_pawn.path != "IMAGES/boule blanche" + add_path + ".png":
+        elif not self.is_player1_turn and self.white_pawn.path != "../IMAGES/boule blanche" + add_path + ".png":
 
-            self.white_pawn.path = "IMAGES/boule blanche" + add_path + ".png"
+            self.white_pawn.path = "../IMAGES/boule blanche" + add_path + ".png"
             self.white_pawn.update()
 
             self.black_pawn.path = "../IMAGES/boule noir.png"
