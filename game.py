@@ -430,27 +430,26 @@ class Game:
 
             self.menu_rules_1.draw(self.screen)
             self.rightfleche_button.draw(self.screen)
-            self.croix_button.draw(self.screen)
             a=L[0]
+
         if self.is_rules_2:
 
             self.menu_rules_2.draw(self.screen)
             self.rightfleche_button.draw(self.screen)
             self.leftfleche_button.draw(self.screen)
-            self.croix_button.draw(self.screen)
             a=L[1]
 
         if self.is_rules_3:
             self.menu_rules_3.draw(self.screen)
             self.rightfleche_button.draw(self.screen)
             self.leftfleche_button.draw(self.screen)
-            self.croix_button.draw(self.screen)
             a = L[2]
         if self.is_rules_4:
             self.menu_rules_4.draw(self.screen)
             self.leftfleche_button.draw(self.screen)
-            self.croix_button.draw(self.screen)
             a = L[3]
+
+        self.croix_button.draw(self.screen)
 
         # Mini gestion d'évènements pour le menu rules
         for event in pygame.event.get():
@@ -459,9 +458,10 @@ class Game:
                 self.running = False
             self.rightfleche_button.handling_event(event)
             self.leftfleche_button.handling_event(event)
+
             self.croix_button.handling_event(event)
 
-            if self.croix_button.draw(self.screen):
+            if self.croix_button.action:
                 self.is_rules = False
 
             if self.rightfleche_button.action and a == '0':  #Passage menu règles 1->2
