@@ -1,7 +1,5 @@
 import pygame
-import graphic_interface
-import game_management
-import bot
+from Python import game_management, graphic_interface, bot
 
 
 class Game:
@@ -32,13 +30,19 @@ class InputInterface:
             text_colour='Black'
         )
 
+        self.background_simple = graphic_interface.Image(
+            "../IMAGES/Interface_Login.png",
+            (0.5 * graphic_interface.windows_size[0], 0.6 * graphic_interface.windows_size[1]),
+            (1.33 * graphic_interface.windows_size[0], 1.33 * graphic_interface.windows_size[1])
+        )
+
         self.background = graphic_interface.Image(
-            "Images/Interface_Login.png",
+            "../IMAGES/Interface_Login.png",
             (0.5 * graphic_interface.windows_size[0], 0.6 * graphic_interface.windows_size[1]),
             (1.33 * graphic_interface.windows_size[0], 1.33 * graphic_interface.windows_size[1])
         )
         self.parchemin_button = graphic_interface.Button(
-            'IMAGES/parchemin.png',
+            '../IMAGES/parchemin.png',
             (0.92 * graphic_interface.windows_size[0], 0.06 * graphic_interface.windows_size[1]),
             (0.1 * graphic_interface.windows_size[0], 0.1 * graphic_interface.windows_size[1])
         )
@@ -58,7 +62,7 @@ class InputInterface:
         )
 
         self.play = graphic_interface.Button(
-            "Images/bouton_play.png",
+            "../IMAGES/bouton_play.png",
             (0.5 * graphic_interface.windows_size[0], 0.9 * graphic_interface.windows_size[1]),
             (0.25 * graphic_interface.windows_size[0], 0.25 * graphic_interface.windows_size[1])
         )
@@ -114,48 +118,48 @@ class Board:
         self.is_rules_4 = False
 
         self.bg = graphic_interface.Image(
-            path='IMAGES/fond écran.png',
+            path='../IMAGES/fond écran.png',
             xy=(self.windows_size[0] // 2, self.windows_size[1] // 2),
             size=(min(self.windows_size), min(self.windows_size))
         )
         self.parchemin_button = graphic_interface.Button(
-            path='IMAGES/parchemin.png',
+            path='../IMAGES/parchemin.png',
             xy=(self.windows_size[0]*0.92, self.windows_size[1]*0.06),
             size=(min(self.windows_size)*0.1, min(self.windows_size)*0.1)
         )
 
         self.rightfleche_button = graphic_interface.Button(
-            path='IMAGES/fleche_droite.png',
+            path='../IMAGES/fleche_droite.png',
             xy=(self.windows_size[0]*0.92, self.windows_size[1]*0.5),
             size=(min(self.windows_size)*0.1, min(self.windows_size)*0.1)
         )
 
         self.leftfleche_button = graphic_interface.Button(
-            path='IMAGES/fleche_gauche.png',
+            path='../IMAGES/fleche_gauche.png',
             xy=(self.windows_size[0] * 0.08, self.windows_size[1] * 0.5),
             size=(min(self.windows_size) * 0.1, min(self.windows_size) * 0.1)
         )
 
         self.pagepause_image = graphic_interface.Image(
-            path='IMAGES/menu_pause.png',
+            path='../IMAGES/menu_pause.png',
             xy=(self.windows_size[0]//2, self.windows_size[1]//2),
             size=(self.windows_size[0]//1.2, self.windows_size[1]//2)
         )
 
         self.quit_button = graphic_interface.Button(
-            path='IMAGES/quitter_.png',
+            path='../IMAGES/quitter_.png',
             xy=(self.windows_size[0]*0.72, self.windows_size[1]*0.68),
             size=(min(self.windows_size)*0.15, min(self.windows_size)*0.07)
         )
 
         self.go_back_button = graphic_interface.Button(
-            path='IMAGES/reprendre_.png',
+            path='../IMAGES/reprendre_.png',
             xy=(self.windows_size[0] * 0.3, self.windows_size[1] * 0.68),
             size=(min(self.windows_size) * 0.23, min(self.windows_size) * 0.07)
         )
 
         self.croix_button = graphic_interface.Button(
-            path='IMAGES/croix.png',
+            path='../IMAGES/croix.png',
             xy=(self.windows_size[0]*0.50, self.windows_size[1]*0.86),
             size=(min(self.windows_size) * 0.1, min(self.windows_size) * 0.1)
         )
@@ -163,22 +167,22 @@ class Board:
 
 
         self.menu_rules_1 = graphic_interface.Image(
-            path='IMAGES/menu_regles_1.png',
+            path='../IMAGES/menu_regles_1.png',
             xy=(self.windows_size[0]//2 , self.windows_size[1]//2 ),
             size=(self.windows_size[0] , self.windows_size[1] )
         )
         self.menu_rules_2 = graphic_interface.Image(
-            path='IMAGES/menu_regles_2.png',
+            path='../IMAGES/menu_regles_2.png',
             xy=(self.windows_size[0]//2, self.windows_size[1]//2),
             size=(self.windows_size[0], self.windows_size[1])
         )
         self.menu_rules_3 = graphic_interface.Image(
-            path='IMAGES/menu_regles_3.png',
+            path='../IMAGES/menu_regles_3.png',
             xy=(self.windows_size[0]//2, self.windows_size[1]//2),
             size=(self.windows_size[0], self.windows_size[1])
         )
         self.menu_rules_4 = graphic_interface.Image(
-            path='IMAGES/menu_regles_4.png',
+            path='../IMAGES/menu_regles_4.png',
             xy=(self.windows_size[0]//2, self.windows_size[1]//2),
             size=(self.windows_size[0], self.windows_size[1])
         )
@@ -189,19 +193,19 @@ class Board:
 
 
         self.pause_button = graphic_interface.Button(
-            path="IMAGES/bouton_pause.png",
+            path="../IMAGES/bouton_pause.png",
             xy=(self.windows_size[0] * 0.05, 0.05 * self.windows_size[1]),
             size=(min(self.windows_size) * 0.07, min(self.windows_size) * 0.07)
         )
 
         self.black_pawn = graphic_interface.Image(
-            path="IMAGES/boule noir.png",
+            path="../IMAGES/boule noir.png",
             xy=(self.windows_size[0] * 0.05, 0.14 * self.windows_size[1]),
             size=(min(self.windows_size) * 0.05, min(self.windows_size) * 0.05)
         )
 
         self.white_pawn = graphic_interface.Image(
-            path="IMAGES/boule blanche.png",
+            path="../IMAGES/boule blanche.png",
             xy=(self.windows_size[0] * 0.05, 0.24 * self.windows_size[1]),
             size=(min(self.windows_size) * 0.05, min(self.windows_size) * 0.05)
         )
@@ -366,7 +370,7 @@ class Board:
             self.black_pawn.path = "IMAGES/boule noir" + add_path + ".png"
             self.black_pawn.update()
 
-            self.white_pawn.path = "IMAGES/boule blanche.png"
+            self.white_pawn.path = "../IMAGES/boule blanche.png"
             self.white_pawn.update()
 
         elif not self.is_player1_turn and self.white_pawn.path != "IMAGES/boule blanche" + add_path + ".png":
@@ -374,7 +378,7 @@ class Board:
             self.white_pawn.path = "IMAGES/boule blanche" + add_path + ".png"
             self.white_pawn.update()
 
-            self.black_pawn.path = "IMAGES/boule noir.png"
+            self.black_pawn.path = "../IMAGES/boule noir.png"
             self.black_pawn.update()
 
     def display(self):
@@ -533,7 +537,7 @@ class Board:
                 self.is_rules_1 = True
 
             elif self.game_over:
-                pass
+                self.running = False
 
             else:
                 self.handling_events()
@@ -541,6 +545,9 @@ class Board:
                 self.display()
 
                 if not self.is_player1_turn:
+
+                    if self.game_over:
+                        break
 
                     self.bot.play(deph=2)
 

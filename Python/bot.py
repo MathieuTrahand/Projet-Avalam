@@ -1,7 +1,6 @@
 from copy import deepcopy
 from math import inf
 
-
 class Bot:
     def __init__(self, game, color="blanc"):
 
