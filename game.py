@@ -92,6 +92,10 @@ class Game:
         self.is_paused = False
         self.is_rules = False
         self.is_over = False
+        self.is_rules_1 = False
+        self.is_rules_2 = False
+        self.is_rules_3 = False
+        self.is_rules_4 = False
 
         self.bg = graphic_interface.Image(
             path='IMAGES/fond écran.png',
@@ -106,13 +110,13 @@ class Game:
 
         self.rightfleche_button = graphic_interface.Button(
             path='IMAGES/fleche_droite.png',
-            xy=(self.windows_size[0]*0.92, self.windows_size[1]*0.06),
+            xy=(self.windows_size[0]*0.92, self.windows_size[1]*0.5),
             size=(min(self.windows_size)*0.1, min(self.windows_size)*0.1)
         )
 
         self.leftfleche_button = graphic_interface.Button(
             path='IMAGES/fleche_gauche.png',
-            xy=(self.windows_size[0] * 0.92, self.windows_size[1] * 0.06),
+            xy=(self.windows_size[0] * 0.08, self.windows_size[1] * 0.5),
             size=(min(self.windows_size) * 0.1, min(self.windows_size) * 0.1)
         )
 
@@ -136,31 +140,37 @@ class Game:
 
         self.croix_button = graphic_interface.Button(
             path='IMAGES/croix.png',
-            xy=(self.windows_size[0]*0.92, self.windows_size[1]*0.06),
-            size=(min(self.windows_size)*0.1, min(self.windows_size)*1)
+            xy=(self.windows_size[0]*0.50, self.windows_size[1]*0.86),
+            size=(min(self.windows_size) * 0.1, min(self.windows_size) * 0.1)
         )
+
 
 
         self.menu_rules_1 = graphic_interface.Image(
             path='IMAGES/menu_regles_1.png',
-            xy=(self.windows_size[0] , self.windows_size[1] ),
+            xy=(self.windows_size[0]//2 , self.windows_size[1]//2 ),
             size=(self.windows_size[0] , self.windows_size[1] )
         )
         self.menu_rules_2 = graphic_interface.Image(
             path='IMAGES/menu_regles_2.png',
-            xy=(self.windows_size[0], self.windows_size[1]),
+            xy=(self.windows_size[0]//2, self.windows_size[1]//2),
             size=(self.windows_size[0], self.windows_size[1])
         )
         self.menu_rules_3 = graphic_interface.Image(
             path='IMAGES/menu_regles_3.png',
-            xy=(self.windows_size[0], self.windows_size[1]),
+            xy=(self.windows_size[0]//2, self.windows_size[1]//2),
             size=(self.windows_size[0], self.windows_size[1])
         )
         self.menu_rules_4 = graphic_interface.Image(
             path='IMAGES/menu_regles_4.png',
-            xy=(self.windows_size[0], self.windows_size[1]),
+            xy=(self.windows_size[0]//2, self.windows_size[1]//2),
             size=(self.windows_size[0], self.windows_size[1])
         )
+
+
+
+
+
 
         self.pause_button = graphic_interface.Button(
             path="IMAGES/bouton_pause.png",
@@ -184,26 +194,20 @@ class Game:
             position=(self.windows_size[0] * 0.165, self.windows_size[1] * 0.05),
             anchor='center'
         )
-        #
 
-        self.is_rules_1 = False
-        self.is_rules_2 = False
-        self.is_rules_3 = False
-        self.is_rules_4 = False
-
-
-        self.possible_moves : dict = {}
+        self.all_piles = {}
+        self.possible_moves = {}
 
         self.player1 = game_management.Player(name=players[0], possible_moves=self.possible_moves, color="noir")
         self.player2 = game_management.Player(name=players[1], possible_moves=self.possible_moves, color="blanc")
 
-        self.is_player1_turn : bool = True
+        self.is_player1_turn = True
 
         self.pawn_distance = (self.windows_size[0] * 0.0625, self.windows_size[1] * 0.063)
         self.create_piles()
 
         self.bot = bot.Bot(self)
-        self.is_game_over : bool = False
+        #self.bot2 = bot.Bot(self, color="noir")
 
 
     def create_piles(self):
@@ -414,6 +418,7 @@ class Game:
 
             if self.go_back_button.action:
                 self.is_paused = False
+
             if self.quit_button.action:
                 self.running = False
 
@@ -488,6 +493,12 @@ class Game:
 
 
 
+
+
+
+
+
+
     def run(self):
         while self.running:
 
@@ -499,6 +510,7 @@ class Game:
 
             elif self.is_rules:
                 self.rules()
+                self.is_rules_1 = True
 
             else:
                 self.handling_events()
