@@ -424,7 +424,7 @@ class Game:
 
 
     def rules(self):
-        L=['0','1','2','3']  #Liste
+        L=['0','1','2','3']
 
         if self.is_rules_1:
 
