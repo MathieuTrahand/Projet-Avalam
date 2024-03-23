@@ -91,6 +91,10 @@ class Game:
         self.is_paused = False
         self.is_rules = False
         self.is_over = False
+        self.is_rules_1 = False
+        self.is_rules_2 = False
+        self.is_rules_3 = False
+        self.is_rules_4 = False
 
         self.bg = graphic_interface.Image(
             path='IMAGES/fond écran.png',
@@ -105,13 +109,13 @@ class Game:
 
         self.rightfleche_button = graphic_interface.Button(
             path='IMAGES/fleche_droite.png',
-            xy=(self.windows_size[0]*0.92, self.windows_size[1]*0.06),
+            xy=(self.windows_size[0]*0.92, self.windows_size[1]*0.5),
             size=(min(self.windows_size)*0.1, min(self.windows_size)*0.1)
         )
 
         self.leftfleche_button = graphic_interface.Button(
             path='IMAGES/fleche_gauche.png',
-            xy=(self.windows_size[0] * 0.92, self.windows_size[1] * 0.06),
+            xy=(self.windows_size[0] * 0.08, self.windows_size[1] * 0.5),
             size=(min(self.windows_size) * 0.1, min(self.windows_size) * 0.1)
         )
 
@@ -135,29 +139,30 @@ class Game:
 
         self.croix_button = graphic_interface.Button(
             path='IMAGES/croix.png',
-            xy=(self.windows_size[0]*0.92, self.windows_size[1]*0.06),
-            size=(min(self.windows_size)*0.1, min(self.windows_size)*1)
+            xy=(self.windows_size[0]*0.50, self.windows_size[1]*0.86),
+            size=(min(self.windows_size) * 0.1, min(self.windows_size) * 0.1)
         )
+
 
 
         self.menu_rules_1 = graphic_interface.Image(
             path='IMAGES/menu_regles_1.png',
-            xy=(self.windows_size[0] , self.windows_size[1] ),
+            xy=(self.windows_size[0]//2 , self.windows_size[1]//2 ),
             size=(self.windows_size[0] , self.windows_size[1] )
         )
         self.menu_rules_2 = graphic_interface.Image(
             path='IMAGES/menu_regles_2.png',
-            xy=(self.windows_size[0], self.windows_size[1]),
+            xy=(self.windows_size[0]//2, self.windows_size[1]//2),
             size=(self.windows_size[0], self.windows_size[1])
         )
         self.menu_rules_3 = graphic_interface.Image(
             path='IMAGES/menu_regles_3.png',
-            xy=(self.windows_size[0], self.windows_size[1]),
+            xy=(self.windows_size[0]//2, self.windows_size[1]//2),
             size=(self.windows_size[0], self.windows_size[1])
         )
         self.menu_rules_4 = graphic_interface.Image(
             path='IMAGES/menu_regles_4.png',
-            xy=(self.windows_size[0], self.windows_size[1]),
+            xy=(self.windows_size[0]//2, self.windows_size[1]//2),
             size=(self.windows_size[0], self.windows_size[1])
         )
 
@@ -412,17 +417,82 @@ class Game:
 
             if self.go_back_button.action:
                 self.is_paused = False
+
             if self.quit_button.action:
                 self.running = False
 
 
     def rules(self):
-        self.menu_rules_1.draw(self.screen)
-        # Mini gestion d'évenements pour le menu pause
+        L=['0','1','2','3']
+
+        if self.is_rules_1:
+
+            self.menu_rules_1.draw(self.screen)
+            self.rightfleche_button.draw(self.screen)
+            self.croix_button.draw(self.screen)
+            a=L[0]
+        if self.is_rules_2:
+
+            self.menu_rules_2.draw(self.screen)
+            self.rightfleche_button.draw(self.screen)
+            self.leftfleche_button.draw(self.screen)
+            self.croix_button.draw(self.screen)
+            a=L[1]
+
+        if self.is_rules_3:
+            self.menu_rules_3.draw(self.screen)
+            self.rightfleche_button.draw(self.screen)
+            self.leftfleche_button.draw(self.screen)
+            self.croix_button.draw(self.screen)
+            a = L[2]
+        if self.is_rules_4:
+            self.menu_rules_4.draw(self.screen)
+            self.leftfleche_button.draw(self.screen)
+            self.croix_button.draw(self.screen)
+            a = L[3]
+
+        # Mini gestion d'évènements pour le menu rules
         for event in pygame.event.get():
 
             if event.type == pygame.QUIT:
                 self.running = False
+            self.rightfleche_button.handling_event(event)
+            self.leftfleche_button.handling_event(event)
+            self.croix_button.handling_event(event)
+
+            if self.croix_button.draw(self.screen):
+                self.is_rules = False
+
+            if self.rightfleche_button.action and a == '0':  #Passage menu règles 1->2
+                self.is_rules_1 = False
+                self.is_rules_2 = True
+
+            if self.leftfleche_button.action and a == '1':  #Passage menu règles 2->1
+                self.is_rules_1 = True
+                self.is_rules_2 = False
+
+
+            if self.rightfleche_button.action and a == '1':  # Passage menu règles 2->3
+                self.is_rules_2 = False
+                self.is_rules_3 = True
+
+            if self.leftfleche_button.action and a == '2':  # Passage menu règles 2->3
+                self.is_rules_2 = True
+                self.is_rules_3 = False
+
+            if self.rightfleche_button.action and a == '2':  # Passage menu règles 3->4
+                self.is_rules_3 = False
+                self.is_rules_4 = True
+
+            if self.leftfleche_button.action and a == '3':  # Passage menu règles 4->3
+                self.is_rules_3 = True
+                self.is_rules_4 = False
+
+
+
+
+
+
 
 
 
@@ -439,6 +509,7 @@ class Game:
 
             elif self.is_rules:
                 self.rules()
+                self.is_rules_1 = True
 
             else:
                 self.handling_events()
