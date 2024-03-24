@@ -130,6 +130,11 @@ class Bot:
             for start_pile in self.possible_moves.keys():
                 for end_pile in self.possible_moves[start_pile]:
 
+                    if start_pile.nb_pawns + end_pile.nb_pawns > 5:
+                        self.possible_moves[start_pile].remove(end_pile)
+                        self.possible_moves[end_pile].remove(start_pile)
+                        break
+
                     # récupérer les données pour revenir en arrière
                     start_pile_color = deepcopy(start_pile.color)
                     end_pile_color = deepcopy(end_pile.color)
